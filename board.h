@@ -5,9 +5,10 @@
 using namespace std;
 class Stack {
   piece * taken;
-  string movedto;
-  string movedfrom;
+  int movedtox, movedtoy, movedfromx, movedfromy;
   Stack * next;
+  Stack(int movedtox, int movedtoy, int movedfromx, int movedfromy, piece *taken = nullptr, Stack * next) : movedtox(movedtox), movedtoy(movedtoy), movedfromx(movedfromx), movedfromy(movedfromy), next(next) {}
+  ~Stack() {taken = nullptr; delete next;}
 }
 
 class Board {
