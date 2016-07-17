@@ -26,4 +26,6 @@ public:
 	}
 	virtual void getAllValidMove(const Piece** layout) = 0;
 	virtual bool move(int destX, int destY, const Piece** layout) = 0;
+	virtual Piece(int x, int y) = 0;
+        ~Piece(int x, int y);
 };

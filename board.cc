@@ -33,13 +33,27 @@ Board::Board() {
 }
 void Board::def() {
   for (int x = 0, x < 8, x++) {
-    blackpieces[x] = new Pawn(1, x);
-    whitepieces[x] = new Pawn(6, x);
+    blackpieces[x] = new Pawn(1, x, false);
+    whitepieces[x] = new Pawn(6, x, true);
     layout[1][x] = blackpieces[x];
     layour[6][x] = whitepieces[x];
   }
-  blackpieces[8] = new Rook(0,0); blackpieces[9] = new Knight(0,1); blackpieces[10] = new Bishop(0,2); blackpieces[11] = new Queen(0,3); blackpieces[12] = new King(0,4); blackpieces[13] = new Bishop(0,5); blackpieces[14] = new Knight(0,6); blackpieces[15] = new Rook(0,7);
-  whitepieces[8] = new Rook(7,0); whitepieces[9] = new Knight(7,1); whitepieces[10] = new Bishop(7,2); whitepieces[11] = new Queen(7,3); whitepieces[12] = new King(7,4); whitepieces[13] = new Bishop(7,5); whitepieces[14] = new Knight(7,6); whitepieces[15] = new Rook(7,7);
+  blackpieces[8] = new Rook(0,0, false);
+  blackpieces[9] = new Knight(1,0, false);
+  blackpieces[10] = new Bishop(2,0,false);
+  blackpieces[11] = new Queen(3,0,false);
+  blackpieces[12] = new King(4,0,false);
+  blackpieces[13] = new Bishop(5,0,false);
+  blackpieces[14] = new Knight(6,0,false);
+  blackpieces[15] = new Rook(7,0,false);
+  whitepieces[8] = new Rook(0,7,true);
+  whitepieces[9] = new Knight(1,7,true);
+  whitepieces[10] = new Bishop(2,7,true);
+  whitepieces[11] = new Queen(3,7,true);
+  whitepieces[12] = new King(4,7,true);
+  whitepieces[13] = new Bishop(5,7,true);
+  whitepieces[14] = new Knight(6,7,true);
+  whitepieces[15] = new Rook(7,7,true);
   whiteKing = whitepieces[12];
   blackKing = blackpieces[12];
   for (int x = 0, x < 8, x++) {
@@ -49,7 +63,8 @@ void Board::def() {
   previous = nullptr;
 }
 bool Board::set(piece * x, int xpos, int ypos) {
-  if (x->
+  layout[ypos][xpos] = x;
+  if (typeid(
 }
  void def();
  bool set(piece * x, int xpos, int ypos);
