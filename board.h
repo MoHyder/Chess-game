@@ -1,21 +1,33 @@
-#include "cell.h"
-#include "pieces.h"
-#include <iostream>
-#include <string>
-using namespace std;
+#ifndef __BOARD_H
+#define __BOARD_H
+#include "piece.h"
+#include <vector>
 
 class Board {
- piece*[8][8] layout;
- piece *whiteKing;
- piece *blackKing;
- bool turn;
- bool incheck;
- piece*[16] blackpieces;
- piece*[16] whitepieces;
- 
- Board();
- ~Board();
- void def();
- bool set(piece * x, int xpos, int ypos);
-}
+public:
+    // parameters
+    Piece *layout [8][8];
+    Piece *blackKing;
+    Piece *whiteKing;    
+    bool inBlackCheck;
+    bool inWhiteCheck;   
+    bool inBlackStaleMate;
+    bool inWhiteStaleMate;
+    bool inBlackCheckMate;
+    bool inWhiteCheckMate;    
+    std::vector <Piece *> blackPieces;
+    std::vector <Piece *> whitePieces;
+
+    // functions 
+    Board();
+    void getBoardView();
+    bool isDone();
+    bool editBoard(std::string piece, int posX, int posY);
+    int move(int posX, int posY, int destX, int destY, char turn, std::string promoted = "");
+    bool isCheck();
+    bool isCheckMate();
+    bool isStaleMate();
+    ~Board();
+};
+#endif
 

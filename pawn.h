@@ -1,19 +1,15 @@
 #ifndef __PAWN_H__
 #define __PAWN_H__
-#include <piece.h>
+#include "piece.h"
 #include <string>
 #include <vector>
 
 class Pawn: public Piece{
-	int curX;
-	int curY;
-	bool moved;	
-	const bool colour;	
 public:
-	std::vector<string> validMoves;		
-	Pawn(int curX,int curY, bool isWhite);
-	void getAllValidMove(const Piece** layout);
-	bool move(int destX, int destY, const Piece** layout);		
+	Pawn(int curX,int curY, char colour, bool moved = false);
+	void getAllValidMoves(Piece* const layout[8][8]);
+	bool move(int destX, int destY, Piece* const layout[8][8]);	
+	// ~Pawn();
 };
 
 #endif

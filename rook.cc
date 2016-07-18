@@ -1,31 +1,28 @@
-#include <Rook.h>
+#include "rook.h"
 #include <string>
 #include <vector>
+using namespace std;
 
-Rook::Rook(int curX,int curY, bool isWhite):isWhite{isWhite}{
-	curX = curX;
-	curY = curY;
-	moved = false;
-}
+Rook::Rook(int curX,int curY, char colour, bool moved):Piece{curX,curY,to_string(curX)+to_string(curY),"Rook",colour,moved}{}
 
-void Rook::getAllValidMoves(const Piece** layout){
+void Rook::getAllValidMoves(Piece* const layout[8][8]){
 	// swip clean original validMoves
 	validMoves.clear();
 	// left
-	int x = curX;
+	int x = curX - 1;
 	int y = curY;
-	while(x - 1 >= 0){
-		if(Piece::pushValidMove(x, y, layout, validMoves) == 0){			
+	while(x >= 0){
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){
 			x--;
 			continue;		
 		}    
 		break;
 	}
 	// right
-	x = curX;
+	x = curX + 1;
 	y = curY;
-	while(x - 1 <= 7){
-		if(Piece::pushValidMove(x, y, layout, validMoves) == 0){			
+	while(x <= 7){
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){
 			x++;		
 			continue;
 		}    
@@ -33,9 +30,9 @@ void Rook::getAllValidMoves(const Piece** layout){
 	}
 	// up
 	x = curX;
-	y = curY;
-	while(y - 1 <= 7){
-		if(Piece::pushValidMove(x, y, layout, validMoves) == 0){
+	y = curY + 1;
+	while(y <= 7){
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){
 			y++;
 			continue;
 		}    
@@ -43,22 +40,21 @@ void Rook::getAllValidMoves(const Piece** layout){
 	}
 	// down
 	x = curX;
-	y = curY;
-	while(y - 1 >= 0){
-		if(Piece::pushValidMove(x, y, layout, validMoves) == 0){
+	y = curY - 1;
+	while(y >= 0){
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){
 			y--;
 			continue;
 		}
 		break;    
 	}
 }
-bool Rook::move(char destX, int destY, const Piece** layout){
+bool Rook::move(int destX, int destY, Piece* const layout[8][8]){
 	// get all valid moves and store it in vector validMoves 
 	getAllValidMoves(layout);
 	// iterate validMoves and check if position is equal to any one of them
 	for(const auto &validPosition : validMoves){
-		if (validPosition[0] == to_string(destX) && validPosition[1] == to_string(destY)){ 
-			moved = True;
+		if (validPosition == (to_string(destX) + to_string(destY))){			
 			return true;
 		}
 	}

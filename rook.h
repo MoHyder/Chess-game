@@ -1,19 +1,15 @@
 #ifndef __ROOK_H__
 #define __ROOK_H__
-#include <piece.h>
+#include "piece.h"
 #include <string>
 #include <vector>
 
 class Rook: public Piece{
-	int curX;
-	int curY;
-	bool moved;
-	const bool isWhite;	
 public:
-	std::vector<string> validMoves;		
-	Rook(int curX,int curY, bool isWhite);
-	void getAllValidMove(const Piece** layout);
-	bool move(int destX, int destY, const Piece** layout);		
+	Rook(int curX,int curY, char colour, bool moved = false);
+	void getAllValidMoves(Piece* const layout[8][8]);
+	bool move(int destX, int destY, Piece* const layout[8][8]);
+	// ~Rook();		
 };
 
 #endif
