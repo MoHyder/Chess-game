@@ -5,14 +5,14 @@ using namespace std;
 
 Queen::Queen(int curX,int curY, char colour, bool moved):Piece{curX,curY,to_string(curX)+to_string(curY),"Queen",colour,moved}{}
 
-void Queen::getAllValidMoves(Piece* const layout[8][8]){
+void Queen::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
 	// swip clean original validMoves
 	validMoves.clear();
 	// left down diagonal
 	int x = curX - 1;
 	int y = curY - 1;	
 	while(x >= 0 && y >= 0){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){	    	
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){	    	
 			x--;
 			y--;
 			continue;
@@ -23,7 +23,7 @@ void Queen::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX + 1;
 	y = curY + 1;
 	while(x <= 7 && y <= 7){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){	    	
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){	    	
 			x++;
 			y++;
 			continue;
@@ -34,7 +34,7 @@ void Queen::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX + 1;
 	y = curY - 1;  
 	while(x <= 7 && y >= 0){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){	    	
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){	    	
 			x++;
 			y--;
 			continue;
@@ -45,7 +45,7 @@ void Queen::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX - 1;
 	y = curY + 1;  
 	while(x >= 0 && y <= 7){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){	    	
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){	    	
 			x--;
 			y++;
 			continue;
@@ -56,7 +56,7 @@ void Queen::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX - 1;
 	y = curY;
 	while(x >= 0){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){			
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){			
 			x--;		
 			continue;
 		}
@@ -66,7 +66,7 @@ void Queen::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX + 1;
 	y = curY;
 	while(x <= 7){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){			
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){			
 			x++;		
 			continue;
 		}
@@ -76,7 +76,7 @@ void Queen::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX;
 	y = curY + 1;
 	while(y <= 7){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){			
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){			
 			y++;		
 			continue;
 		}
@@ -86,7 +86,7 @@ void Queen::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX;
 	y = curY - 1;
 	while(y >= 0){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){			
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){			
 			y--;		
 			continue;
 		}

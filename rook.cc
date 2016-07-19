@@ -5,14 +5,14 @@ using namespace std;
 
 Rook::Rook(int curX,int curY, char colour, bool moved):Piece{curX,curY,to_string(curX)+to_string(curY),"Rook",colour,moved}{}
 
-void Rook::getAllValidMoves(Piece* const layout[8][8]){
+void Rook::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
 	// swip clean original validMoves
 	validMoves.clear();
 	// left
 	int x = curX - 1;
 	int y = curY;
 	while(x >= 0){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){
 			x--;
 			continue;		
 		}    
@@ -22,7 +22,7 @@ void Rook::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX + 1;
 	y = curY;
 	while(x <= 7){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){
 			x++;		
 			continue;
 		}    
@@ -32,7 +32,7 @@ void Rook::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX;
 	y = curY + 1;
 	while(y <= 7){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){
 			y++;
 			continue;
 		}    
@@ -42,7 +42,7 @@ void Rook::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX;
 	y = curY - 1;
 	while(y >= 0){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves, backedUp) == 0){
 			y--;
 			continue;
 		}

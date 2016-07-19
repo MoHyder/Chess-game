@@ -6,14 +6,14 @@ using namespace std;
 Bishop::Bishop(int curX,int curY, char colour, bool moved):Piece{curX,curY,to_string(curX)+to_string(curY),"Bishop",colour,moved}{}
 
 // pushes all valid moves to vector validMoves
-void Bishop::getAllValidMoves(Piece* const layout[8][8]){
+void Bishop::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 	// swip clean original validMoves
 	validMoves.clear();
 	// left down diagonal
 	int x = curX - 1;
 	int y = curY - 1;	
 	while(x >= 0 && y >= 0){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){	    	
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves,backedUp) == 0){	    	
 			x--;
 			y--;
 			continue;
@@ -24,7 +24,7 @@ void Bishop::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX + 1;
 	y = curY + 1;
 	while(x <= 7 && y <= 7){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){	    	
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves,backedUp) == 0){	    	
 			x++;
 			y++;
 			continue;
@@ -35,7 +35,7 @@ void Bishop::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX + 1;
 	y = curY - 1;  
 	while(x <= 7 && y >= 0){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){	    	
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves,backedUp) == 0){	    	
 			x++;
 			y--;
 			continue;
@@ -46,7 +46,7 @@ void Bishop::getAllValidMoves(Piece* const layout[8][8]){
 	x = curX - 1;
 	y = curY + 1;  
 	while(x >= 0 && y <= 7){
-		if(Piece::pushValidMove(x, y, colour, layout, validMoves) == 0){	    	
+		if(Piece::pushValidMove(x, y, colour, layout, validMoves,backedUp) == 0){	    	
 			x--;
 			y++;
 			continue;

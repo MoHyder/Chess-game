@@ -7,9 +7,9 @@
 class Rook: public Piece{
 public:
 	Rook(int curX,int curY, char colour, bool moved = false);
-	void getAllValidMoves(Piece* const layout[8][8]);
+	void getAllValidMoves(Piece* const layout[8][8], bool backedUp = false);
 	bool move(int destX, int destY, Piece* const layout[8][8]);
-	// ~Rook();		
+	~Rook(){}		
 };
 
 #endif

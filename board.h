@@ -23,7 +23,9 @@ public:
     void getBoardView();
     bool isDone();
     bool editBoard(std::string piece, int posX, int posY);
-    int move(int posX, int posY, int destX, int destY, char turn, std::string promoted = "");
+    void updatePieceInfo(int curX, int curY, bool moved);
+    bool moveCastling(int posX, int posY, int destX, int destY, bool undo = false);
+    int move(int posX, int posY, int destX, int destY, char turn, std::string promote = "");
     bool isCheck();
     bool isCheckMate();
     bool isStaleMate();
