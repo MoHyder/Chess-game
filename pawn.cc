@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-Pawn::Pawn(int curX,int curY, char colour, bool moved):Piece{curX,curY,to_string(curX)+to_string(curY),"Pawn",colour,moved}{}
+Pawn::Pawn(int curX,int curY, char colour, bool moved):Piece{curX,curY,"Pawn",colour,moved}{}
 	
 
 void Pawn::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
@@ -16,14 +16,14 @@ void Pawn::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
 	int y = curY + (multiplier  * 1);
 	// two steps	
 	if(!moved && y < 7 && y > 1 && layout[x][y + (multiplier*1)] == nullptr)			
-		Piece::pushValidMove(x, y + (multiplier  * 1), colour, layout,validMoves,backedUp);
+		Piece::pushValidMove(x, y + (multiplier  * 1), layout,validMoves,backedUp);
 	// one step
-	if(layout[x][y] == nullptr) Piece::pushValidMove(x, y, colour, layout,validMoves,backedUp);
+	if(layout[x][y] == nullptr) Piece::pushValidMove(x, y, layout,validMoves,backedUp);
 	// kill
-	if(x < 7 && layout[x + 1][y] != nullptr && layout[x + 1][y]->colour != colour)
-		Piece::pushValidMove(x + 1, y, colour, layout,validMoves,backedUp);	
-	if(x > 1  && layout[x - 1][y] != nullptr && layout[x - 1][y]->colour != colour)
-		Piece::pushValidMove(x - 1, y, colour, layout,validMoves,backedUp);	
+	if(x < 7 && layout[x + 1][y] != nullptr && layout[x + 1][y]->getColour() != colour)
+		Piece::pushValidMove(x + 1, y, layout,validMoves,backedUp);	
+	if(x > 1  && layout[x - 1][y] != nullptr && layout[x - 1][y]->getColour() != colour)
+		Piece::pushValidMove(x - 1, y, layout,validMoves,backedUp);	
 }
 bool Pawn::move(int destX, int destY, Piece* const layout[8][8]){
 	// get all valid moves and store it in vector validMoves 

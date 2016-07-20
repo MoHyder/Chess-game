@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-King::King(int curX,int curY, char colour, bool moved):Piece{curX,curY,to_string(curX)+to_string(curY),"King",colour,moved}{}
+King::King(int curX,int curY, char colour, bool moved):Piece{curX,curY,"King",colour,moved}{}
 
 void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 	// swip clean original validMoves
@@ -12,7 +12,7 @@ void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 		int x = curX - allKingMoves[i][0];
 		int y = curY - allKingMoves[i][1];
 		if(x >= 0 && x <= 7 && y >= 0 && y <= 7)
-			Piece::pushValidMove(x, y, colour, layout, validMoves,backedUp);
+			Piece::pushValidMove(x, y, layout, validMoves,backedUp);
 	}
 	// Castling white king
 	if(!moved && colour == 'w'){
@@ -24,7 +24,7 @@ void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 			 	break;
 			}		
 		
-		if(castleRight && layout[7][0] && layout[7][0]->name == "Rook" && layout[7][0]->colour == 'w')
+		if(castleRight && layout[7][0] && layout[7][0]->getName() == "Rook" && layout[7][0]->getColour() == 'w')
 			validMoves.push_back("60");			
 
 		// left side
@@ -35,7 +35,7 @@ void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 			 	break;
 			}				
 					
-		if(castleLeft && layout[0][0] && layout[0][0]->name == "Rook" && layout[0][0]->colour == 'w')
+		if(castleLeft && layout[0][0] && layout[0][0]->getName() == "Rook" && layout[0][0]->getColour() == 'w')
 			validMoves.push_back("20");		
 	}
 
@@ -49,7 +49,7 @@ void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 			 	break;
 			}		
 		
-		if(castleRight && layout[7][7] && layout[7][7]->name == "Rook" && layout[7][7]->colour == 'b')
+		if(castleRight && layout[7][7] && layout[7][7]->getName() == "Rook" && layout[7][7]->getColour() == 'b')
 			validMoves.push_back("67");
 		
 		// left side
@@ -60,7 +60,7 @@ void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 			 	break;
 			}		
 		
-		if(castleLeft && layout[0][7] && layout[0][7]->name == "Rook" && layout[0][7]->colour == 'b')
+		if(castleLeft && layout[0][7] && layout[0][7]->getName() == "Rook" && layout[0][7]->getColour() == 'b')
 			validMoves.push_back("27");
 		
 		

@@ -3,21 +3,18 @@
 #include "piece.h"
 #include <vector>
 
-class Board {
-public:
-    // parameters
-    Piece *layout [8][8];
+class Board {    
     Piece *blackKing;
-    Piece *whiteKing;    
-    bool inBlackCheck;
-    bool inWhiteCheck;   
-    bool inBlackStaleMate;
-    bool inWhiteStaleMate;
-    bool inBlackCheckMate;
-    bool inWhiteCheckMate;    
+    Piece *whiteKing;
+    bool inWhiteCheck;
+    bool inBlackCheck;   
+    bool inStaleMate;
+    bool inCheckMate;   
+
+public:
+    Piece *layout [8][8];       
     std::vector <Piece *> blackPieces;
     std::vector <Piece *> whitePieces;
-
     // functions 
     Board();
     void getBoardView();

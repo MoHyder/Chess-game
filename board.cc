@@ -17,87 +17,70 @@ Board::Board(){
     blackKing = nullptr;
     whiteKing = nullptr;
     inBlackCheck = false;
-    inWhiteCheck = false;   
-    inBlackStaleMate = false;
-    inWhiteStaleMate = false;
-    inBlackCheckMate = false;
-    inWhiteCheckMate = false;
+    inWhiteCheck = false;
+    inStaleMate = false;
+    inCheckMate = false;
 }
 
 void Board::getBoardView(){    
     // getting white pieces and king
     whitePieces.clear();
-    for(int x = 0; x < 8; ++x){
-        for(int y = 0; y < 8; ++y){            
-            if(layout[x][y] && layout[x][y]->colour == 'w'){ 
-                // cout <<  layout[x][y]->name << " w " << layout[x][y]->curXY << endl;
-                whitePieces.push_back(layout[x][y]);                
-                layout[x][y]->getAllValidMoves(layout);
+    blackPieces.clear(); 
+    string colours = "wb";
+    for(unsigned int c = 0; c < colours.length(); c++){ 
+        char colour = colours[c];
+        for(int x = 0; x < 8; ++x){
+            for(int y = 0; y < 8; ++y){            
+                if(layout[x][y] && layout[x][y]->getColour() == colour){ 
+                    if(colour == 'w') whitePieces.push_back(layout[x][y]);
+                    else blackPieces.push_back(layout[x][y]);      
+                    layout[x][y]->getAllValidMoves(layout);
+                }
+                if(layout[x][y] && layout[x][y]->getName() == "King" && layout[x][y]->getColour() == colour) {
+                    if(colour == 'w') whiteKing = layout[x][y];
+                    else blackKing = layout[x][y];
+                }
             }
-            if(layout[x][y] && layout[x][y]->name == "King" && layout[x][y]->colour == 'w') whiteKing = layout[x][y];
-        }
-    }
-    // getting black pieces and king
-    blackPieces.clear();    
-    for(int x = 0; x < 8; ++x){
-        for(int y = 0; y < 8; ++y){            
-            if(layout[x][y] && layout[x][y]->colour == 'b') {
-                // cout <<  layout[x][y]->name << " b " << layout[x][y]->curXY << endl;
-                blackPieces.push_back(layout[x][y]);
-                layout[x][y]->getAllValidMoves(layout);
-            }
-            if(layout[x][y] && layout[x][y]->name == "King" && layout[x][y]->colour == 'b') blackKing = layout[x][y];
-        }
-    }
-    
+        } 
+    }  
 }
 
 // checking if board setup is done
 bool Board::isDone(){
-
     if(isCheck()) return false;
-    //checking if there is only one white king
-    int count = 0;
-    for(int x = 0; x < 8; ++x)
-        for(int y = 0; y < 8; ++y)
-            if(layout[x][y] && layout[x][y]->name == "King" && layout[x][y]->colour == 'w')
-                count++;
-        
-    if(count != 1) return false;
-    
-    //checking if there is only one black king
-    count = 0;
-    for(int x = 0; x < 8; ++x)
-        for(int y = 0; y < 8; ++y)
-            if(layout[x][y] && layout[x][y]->name == "King" && layout[x][y]->colour == 'b')
-                count++;
-        
-    if(count != 1) return false;
-    
+    //checking if there is only one of each king
+    string colours = "wb" ;
+    for(unsigned int c = 0; c < colours.length(); c++){
+        char colour = colours[c]; 
+        int count = 0;
+        for(int x = 0; x < 8; ++x)
+            for(int y = 0; y < 8; ++y)
+                if(layout[x][y] && layout[x][y]->getName() == "King" && layout[x][y]->getColour() == colour)
+                    count++;
+            
+        if(count != 1) return false;
+    }
     //checking if no pawns in the last rows of the board
     for(int x = 0; x < 8; ++x)
-        if(layout[x][7] && layout[x][7]->name == "Pawn") return false;
+        if(layout[x][7] && layout[x][7]->getName() == "Pawn") return false;
     for(int x = 0; x < 8; ++x)
-        if(layout[x][0] && layout[x][0]->name == "Pawn") return false;
+        if(layout[x][0] && layout[x][0]->getName() == "Pawn") return false;
 
     getBoardView();
-
-    if(isCheck()) return false;
-
-    return true;
-
-           
+    return true;          
 }
+
 // adds and removes piece from Board
 bool Board::editBoard(string piece, int posX, int posY){
     if(piece == "d"){
         return isDone();
-    }else if(layout[posX][posY]) {
+    }else if(piece == "-" || layout[posX][posY]) {
         // remove piece
         delete layout[posX][posY];
         layout[posX][posY] = nullptr;        
     }
-    // adding peices
+
+    // adding new peices
     if(piece == "K"){
         bool moved = false;
         if(posX != 4 && posY != 0) moved = true;
@@ -142,161 +125,121 @@ bool Board::editBoard(string piece, int posX, int posY){
 bool Board::isCheck(){
     inBlackCheck = inWhiteCheck = false;
 
-    // checking if black king is in check
-    for(const auto &whitePiece : whitePieces){
-        whitePiece->getAllValidMoves(layout,true);        
-       for(const auto &whitePieceMove : whitePiece->validMoves){
-            if(blackKing->curXY == whitePieceMove){
-                inBlackCheck = true;
-                break;
+    string colours = "wb" ;
+    for(unsigned int c = 0; c < colours.length(); c++){
+        bool inCheck = false;
+        Piece *king; vector<Piece *> *pieces;
+        char colour = colours[c];
+        if(colour == 'w'){ king = whiteKing; pieces = &blackPieces;}
+        else{king = blackKing; pieces = &whitePieces;}
+
+        for(const auto &piece : *pieces){
+            piece->getAllValidMoves(layout,true);        
+            for(const auto &pieceMove : piece->validMoves){
+                string kingXY = to_string(king->getX()) + to_string(king->getY());
+                if(kingXY == pieceMove){
+                    inCheck = true;
+                    break;
+                }
             }
+            if(inCheck) break;
         }
-        if(inWhiteCheck) break;
+        if(inCheck && colour == 'w'){ inWhiteCheck = true; return true;}
+        if(inCheck && colour == 'b'){ inBlackCheck = true; return true;}
+        getBoardView();         
     }
 
-    // checking if white king is in check
-    for(const auto &blackPiece : blackPieces){
-        blackPiece->getAllValidMoves(layout,true);        
-        for(const auto &blackPieceMove : blackPiece->validMoves){
-            if(whiteKing->curXY == blackPieceMove){
-                inWhiteCheck = true;
-                break;
-            }
-        }
-        if(inWhiteCheck) break;
-    }    
-    return (inBlackCheck || inWhiteCheck);    
-      
+    return false;  
 }
 
-bool Board::isCheckMate(){
-    inWhiteCheckMate = inBlackCheckMate = false;
+bool Board::isCheckMate(){   
+    if(!(inBlackCheck || inWhiteCheck))  return false;
     
-    // checking if black check mate
-    if(!inBlackCheck) inBlackCheckMate = false;
-    // checking if black king can make any move    
-    else{
-        for(const auto &blackKingMove : blackKing->validMoves){            
-            inBlackCheckMate = false;
-            for(const auto &whitePiece : whitePieces){ 
-                whitePiece->getAllValidMoves(layout,true);    
-                for(const auto &whitePieceMove : whitePiece->validMoves){                    
-                    if(blackKingMove == whitePieceMove){
-                        cout << blackKingMove << " == " << whitePieceMove << " " << whitePiece->name << endl;
-                        inBlackCheckMate = true;
+    string colours = "wb" ;
+    for(unsigned int c = 0; c < colours.length(); c++){
+        inCheckMate = false;
+        Piece *king; vector<Piece *> *pieces;
+        char colour = colours[c];
+        if(colour == 'w'){ king = whiteKing; pieces = &blackPieces;}
+        else{king = blackKing; pieces = &whitePieces;}
+
+        for(const auto &kingMove : king->validMoves){
+            inCheckMate = false;
+            for(const auto &piece : *pieces){ 
+                piece->getAllValidMoves(layout,true);    
+                for(const auto &pieceMove : piece->validMoves){                    
+                    if(kingMove == pieceMove){
+                        cout << kingMove << " == " << pieceMove << " " << piece->getName() << endl;
+                        inCheckMate = true;
                         break;
                     }
                 } 
-                if(inBlackCheckMate) break;               
+                if(inCheckMate) break;               
             }
-            if(!inBlackCheckMate) break;
+            if(!inCheckMate) break;
         }
-    }
-
-    // checking if white check mate
-    if(!inWhiteCheck) inWhiteCheckMate = false;
-    // checking if white king can make any move
-    else{
-        for(const auto &whiteKingMove : whiteKing->validMoves){
-            inWhiteCheckMate = false;
-            for(const auto &blackPiece : blackPieces){
-                blackPiece->getAllValidMoves(layout,true);                    
-                for(const auto &blackPieceMove : blackPiece->validMoves){
-                    if(whiteKingMove == blackPieceMove){
-                        cout << whiteKingMove << " == " << blackPieceMove << " " << blackPiece->name << endl;
-                        inWhiteCheckMate = true;
-                        break;
-                    }
-                }
-                if(inWhiteCheckMate) break;                 
-            }
-            if(!inWhiteCheckMate) break;
-        }
-    }
-
-    return (inWhiteCheckMate || inBlackCheckMate);
+        if(inCheckMate) return true;
+        getBoardView(); 
+    }    
+    return false;
 }
 
+
 bool Board::isStaleMate(){
-    inWhiteStaleMate = inBlackStaleMate = false;
+    if(inBlackCheck || inWhiteCheck) return false;
 
-    if(inBlackCheck) inBlackStaleMate = false;
-    // checking if black in is stale mate
-    else{
-        // checking if any black peice can move
-        for(const auto &blackPiece : blackPieces){
-            inBlackStaleMate = true;
-            if(blackPiece->name == "King") continue;
-            blackPiece->getAllValidMoves(layout);
-            if(blackPiece->validMoves.size() > 0){
-                inBlackStaleMate = false;
+    string colours = "wb" ;
+    for(unsigned int c = 0; c < colours.length(); c++){
+        inStaleMate = true;
+        Piece *king; vector<Piece *> *playerPieces; vector<Piece *> *opponentPieces;
+        char colour = colours[c];
+        if(colour == 'w'){ king = whiteKing; playerPieces = &whitePieces;  opponentPieces = &blackPieces;}
+        else{ king = blackKing; playerPieces = &blackPieces;  opponentPieces = &whitePieces;}
+
+        for(const auto &piece : *playerPieces){
+            if(piece->getName() == "King") continue;
+            piece->getAllValidMoves(layout);
+            if(piece->validMoves.size() > 0){
+                inStaleMate = false;
                 break;
             }
         }
-        // checking if black king can make any moves
-        if (inBlackStaleMate){
-            for(const auto &blackKingMove : blackKing->validMoves){
-                inBlackStaleMate = false;
-                for(const auto &whitePiece : whitePieces){
-                    whitePiece->getAllValidMoves(layout,true);
-                    for(const auto &whitePieceMove : whitePiece->validMoves){
-                        if(blackKingMove == whitePieceMove){
-                            inBlackStaleMate = true;
-                            break;
-                        }
-                    }
-                    if(inBlackStaleMate) break;            
-                }
-                if(!inBlackStaleMate) break;
-            }
-        }
-     }
 
-    if(inWhiteCheck) inWhiteStaleMate = false;
-    // checking if white in is stale mate
-    else{
-        // checking if any white peice can move
-        for(const auto &whitePiece : whitePieces){
-            inWhiteStaleMate = true;
-            if(whitePiece->name == "King") continue;
-            whitePiece->getAllValidMoves(layout);
-            if(whitePiece->validMoves.size() > 0){
-                inWhiteStaleMate = false;
-                break;
-            }
-        }
-        // checking if white king can make any moves
-        if (inWhiteStaleMate){
-            for(const auto &whiteKingMove : whiteKing->validMoves){
-                inWhiteStaleMate = false;
-                for(const auto &blackPiece : blackPieces){
-                    blackPiece->getAllValidMoves(layout,true);
-                    for(const auto &blackPieceMove : blackPiece->validMoves){
-                        if(whiteKingMove == blackPieceMove){
-                            inWhiteStaleMate = true;
+        if (inStaleMate){
+            for(const auto &kingMove : king->validMoves){
+                inStaleMate = false;
+                for(const auto &piece : *opponentPieces){
+                    piece->getAllValidMoves(layout,true);
+                    for(const auto &pieceMove : piece->validMoves){
+                        if(kingMove == pieceMove){
+                            inStaleMate = true;
                             break;
                         }
                     }
-                    if(inWhiteStaleMate) break;            
+                    
+                    if(inStaleMate) break;            
                 }
-                if(!inWhiteStaleMate) break;
+                if(!inStaleMate) break;
+
             }
         }
-    }
-    return (inWhiteStaleMate || inBlackStaleMate);
+        if(inStaleMate) return true;
+        getBoardView();
+    } 
+
+    return false;
 
 }
 
 void Board::updatePieceInfo(int curX, int curY, bool moved){
-    layout[curX][curY]->curX = curX;
-    layout[curX][curY]->curY= curY;
-    layout[curX][curY]->curXY= to_string(curX) + to_string(curY);
-    layout[curX][curY]->moved = moved;
+    layout[curX][curY]->setX(curX);
+    layout[curX][curY]->setY(curY);
+    layout[curX][curY]->setMoved(moved);
     return;
 }
 
 bool Board::moveCastling(int posX, int posY, int destX, int destY, bool undo){
-    if(layout[posX][posY] && layout[posX][posY]->name == "King" && !undo){
+    if(layout[posX][posY] && layout[posX][posY]->getName() == "King" && !undo){
         if((destX == 6 && destY == 0) || (destX == 6 && destY == 7)){
             // change king
             layout[destX][destY] = layout[posX][posY];
@@ -319,7 +262,7 @@ bool Board::moveCastling(int posX, int posY, int destX, int destY, bool undo){
             return true;
         }        
     // undo move
-    }else if(layout[posX][posY] && layout[posX][posY]->name == "King" && undo){
+    }else if(layout[posX][posY] && layout[posX][posY]->getName() == "King" && undo){
         if((destX == 6 && destY == 0) || (destX == 6 && destY == 7)){
             layout[posX][posY] = layout[destX][destY];
             updatePieceInfo(posX ,posY,true);
@@ -344,27 +287,27 @@ bool Board::moveCastling(int posX, int posY, int destX, int destY, bool undo){
 // The move function returns an int depending if move was a success or a failure
 int Board::move(int posX, int posY, int destX, int destY, char turn, string promote){
     // gameover checkMate
-    if(inBlackCheckMate || inBlackCheckMate) return 90;
+    if(inCheckMate) return 90;
     // gameover Stale Mate
-    if(inBlackStaleMate || inWhiteStaleMate) return 91;
+    if(inStaleMate) return 91;
     if(posX == destX && posY == destY) return 201;    
     // if no piece exists
     if(layout[posX][posY] == nullptr) return 202;
     // trying to move opponents piece
-    if(!((layout[posX][posY]->colour == 'w' && turn == 'w') || (layout[posX][posY]->colour == 'b' && turn == 'b')))  return 203;
+    if(!((layout[posX][posY]->getColour() == turn) || (layout[posX][posY]->getColour() == turn)))  return 203;
 
     // valid move
     if(layout[posX][posY]->move(destX,destY,layout)){
         // temp variables
         Piece *kill = nullptr;
-        bool tempMoved = layout[posX][posY]->moved;
+        bool tempMoved = layout[posX][posY]->getMoved();
         bool castling = false;
         Piece *tempPawn = nullptr;
         bool pawnPromotion= false;
         // pawn promotion
-        if(promote != "" && layout[posX][posY]->name == "Pawn"){
+        if(promote != "" && layout[posX][posY]->getName() == "Pawn"){
             cout << "promote" << endl;
-           if((layout[posX][posY]->curY == 6 && destY == 7) || (layout[posX][posY]->curY == 1 && destY == 0)){
+           if((layout[posX][posY]->getY() == 6 && destY == 7) || (layout[posX][posY]->getY() == 1 && destY == 0)){
                 if(posX - destX == 1 || posX - destX == -1) {kill = layout[destX][destY]; layout[destX][destY] = nullptr;}
                 tempPawn = layout[posX][posY];
                 layout[posX][posY] = nullptr;
@@ -378,7 +321,7 @@ int Board::move(int posX, int posY, int destX, int destY, char turn, string prom
         // all other moves              
         }else{        
             // killing oppents piece
-            if(layout[destX][destY] != nullptr && (layout[posX][posY]->colour != layout[destX][destY]->colour)) 
+            if(layout[destX][destY] != nullptr && (layout[posX][posY]->getColour() != layout[destX][destY]->getColour())) 
                 kill = layout[destX][destY];
             // "physically moving the piece"
             layout[destX][destY] = layout[posX][posY];            
@@ -408,7 +351,7 @@ int Board::move(int posX, int posY, int destX, int destY, char turn, string prom
             }              
             return 204;
         }else{ 
-            cout << "Moving " << layout[destX][destY]->colour + layout[destX][destY]->name << endl;   
+            cout << "Moving " << layout[destX][destY]->getColour() + layout[destX][destY]->getName() << endl;   
             // cleaning up;
             int killed = 0;
             int promotion = 0;  

@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-Knight::Knight(int curX,int curY, char colour, bool moved):Piece{curX,curY,to_string(curX)+to_string(curY),"Knight",colour,moved}{}
+Knight::Knight(int curX,int curY, char colour, bool moved):Piece{curX,curY,"Knight",colour,moved}{}
 
 void Knight::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
 	// swip clean original validMoves
@@ -12,7 +12,7 @@ void Knight::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
 		int x = curX - allKnightMoves[i][0];
 		int y = curY - allKnightMoves[i][1];		
 		if(x >= 0 && x <= 7 && y >= 0 && y <= 7)
-			Piece::pushValidMove(x, y,colour, layout, validMoves,backedUp);
+			Piece::pushValidMove(x, y, layout, validMoves,backedUp);
 	}	
 }
 bool Knight::move(int destX, int destY, Piece* const layout[8][8]){
