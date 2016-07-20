@@ -4,21 +4,15 @@
 #include "board.h"
 #include "pieces.h"
 #include "king.h"
-#include "cell.h"
+#include "pawn.h"
+#include "queen.h"
+#include "rook.h"
+#include "player.h"
+#include "human.h"
+#include "view.h"
+#include "text.h"
+
 using namespace std;
-class player {
-  Board &b;
-  bool move() = 0;
-};
-class human : public player {
-  bool move() {
-    string command, cell1, cell2;
-    cin >> command;
-    if (command == "resign") 
-    return b.move(cell1, cell2);
-  }
-  player(Board &b) : b(b) {};
-}
 
 int main() {
   string c;
@@ -29,6 +23,7 @@ int main() {
   int whitescore = 0;
   int blackscore = 0;
   Board * board = new Board();
+  Text view = new Text(board);
   bool whiteturn = true;
   while (cin >> c) {
     if ("game" == c) {
@@ -50,19 +45,23 @@ int main() {
           cin >> c;
           string x;
           cin >> x;
-          piece newpiece;
-          // check what piece c is, initialize it.
-          board->set(newpiece, x);
+	  int xpos, ypos;
+	  xpos = x[0] - 'a';
+	  ypos = x[1] - '1';
+          board->editBoard(x, xpos, ypos);
         } else if (c == "-") {
           cin >> c;
           board->remove(c);
         }
       }
     }
-    while (! board->done) {
-      try {current->move;}
-      catch { // catch resign and break
+    View view(board);
+    view.print();
+    while (! board->isCheckMate() || ! board->isStaleMate()) {
+      if (! current->move) {
+        break;
       }
+      view.print();
       if (whiteturn) {
         whiteturn = false;
         current = black;
