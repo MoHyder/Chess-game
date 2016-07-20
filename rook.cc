@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-Rook::Rook(int curX,int curY, char colour, bool moved):Piece{curX,curY,"Rook",colour,moved}{}
+Rook::Rook(int curX,int curY, char colour, bool moved):Piece{curX,curY,'R',colour,moved}{}
 
 void Rook::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
 	// swip clean original validMoves

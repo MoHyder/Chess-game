@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-Bishop::Bishop(int curX,int curY, char colour, bool moved):Piece{curX,curY,"Bishop",colour,moved}{}
+Bishop::Bishop(int curX,int curY, char colour, bool moved):Piece{curX,curY,'B',colour,moved}{}
 
 // pushes all valid moves to vector validMoves
 void Bishop::getAllValidMoves(Piece* const layout[8][8],bool backedUp){

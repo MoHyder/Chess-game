@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-Knight::Knight(int curX,int curY, char colour, bool moved):Piece{curX,curY,"Knight",colour,moved}{}
+Knight::Knight(int curX,int curY, char colour, bool moved):Piece{curX,curY,'N',colour,moved}{}
 
 void Knight::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
 	// swip clean original validMoves

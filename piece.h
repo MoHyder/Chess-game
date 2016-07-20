@@ -8,7 +8,7 @@ class Piece{
 protected:
 	int curX;
 	int curY;
-	const std::string name;
+	const char name;
 	const char colour;
 	bool moved;
 
@@ -25,6 +25,7 @@ protected:
 			// piece is not same colour and can be killed 
 			std::string result = std::to_string(x) + std::to_string(y);
 			if(result != curXY)	validMoves.push_back(result);
+			if(backedUp && layout[x][y]->getName() == 'K') return 0;
 		}
 		return 1;
 	}
@@ -32,14 +33,14 @@ protected:
 public:	
 	// vector for all valid moves a piece can make
 	std::vector<std::string> validMoves;
-	Piece(int curX, int curY, std::string name, char colour, bool moved = false)
+	Piece(int curX, int curY, char name, char colour, bool moved = false)
 	:curX{curX},curY{curY},name{name},colour{colour},moved{moved}{}	
 
 	int getX(){return curX;}
 	int getY(){return curY;}
 	bool getMoved(){return moved;}
 	char getColour(){return colour;}
-	std::string getName(){return name;}
+	char getName(){return name;}
 	void setX(int x){curX = x;}
 	void setY(int y){curY = y;}
 	void setMoved(bool moved){moved = moved;};

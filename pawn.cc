@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-Pawn::Pawn(int curX,int curY, char colour, bool moved):Piece{curX,curY,"Pawn",colour,moved}{}
+Pawn::Pawn(int curX,int curY, char colour, bool moved):Piece{curX,curY,'P',colour,moved}{}
 	
 
 void Pawn::getAllValidMoves(Piece* const layout[8][8], bool backedUp){

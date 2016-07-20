@@ -1,7 +1,7 @@
 #include "board.h"
 #include <iostream>
 #include <string>
-#include <fstream>
+#include <sstream>
 #include "board.h"
 #include "piece.h"
 #include "king.h"
@@ -36,7 +36,7 @@ void Board::getBoardView(){
                     else blackPieces.push_back(layout[x][y]);      
                     layout[x][y]->getAllValidMoves(layout);
                 }
-                if(layout[x][y] && layout[x][y]->getName() == "King" && layout[x][y]->getColour() == colour) {
+                if(layout[x][y] && layout[x][y]->getName() == 'K' && layout[x][y]->getColour() == colour) {
                     if(colour == 'w') whiteKing = layout[x][y];
                     else blackKing = layout[x][y];
                 }
@@ -55,16 +55,16 @@ bool Board::isDone(){
         int count = 0;
         for(int x = 0; x < 8; ++x)
             for(int y = 0; y < 8; ++y)
-                if(layout[x][y] && layout[x][y]->getName() == "King" && layout[x][y]->getColour() == colour)
+                if(layout[x][y] && layout[x][y]->getName() == 'K' && layout[x][y]->getColour() == colour)
                     count++;
             
         if(count != 1) return false;
     }
     //checking if no pawns in the last rows of the board
     for(int x = 0; x < 8; ++x)
-        if(layout[x][7] && layout[x][7]->getName() == "Pawn") return false;
+        if(layout[x][7] && layout[x][7]->getName() == 'P') return false;
     for(int x = 0; x < 8; ++x)
-        if(layout[x][0] && layout[x][0]->getName() == "Pawn") return false;
+        if(layout[x][0] && layout[x][0]->getName() == 'P') return false;
 
     getBoardView();
     return true;          
@@ -89,7 +89,7 @@ bool Board::editBoard(string piece, int posX, int posY){
         layout[posX][posY] = new Queen(posX,posY,'w');
     }else if(piece == "B"){
         layout[posX][posY] = new Bishop(posX,posY,'w');
-    }else if(piece == "KN"){
+    }else if(piece == "N"){
         layout[posX][posY] = new Knight(posX,posY,'w');
     }else if (piece == "R"){
         bool moved = false;
@@ -107,7 +107,7 @@ bool Board::editBoard(string piece, int posX, int posY){
         layout[posX][posY] = new Queen(posX,posY,'b');
     }else if(piece == "b"){
         layout[posX][posY] = new Bishop(posX,posY,'b');
-    }else if(piece == "kn"){
+    }else if(piece == "n"){
         layout[posX][posY] = new Knight(posX,posY,'b');
     }else if(piece == "r"){
         bool moved = false;
@@ -176,7 +176,7 @@ bool Board::isCheckMate(){
                 } 
                 if(inCheckMate) break;               
             }
-            if(!inCheckMate) break;
+            if(!inCheckMate)break;
         }
         if(inCheckMate) return true;
         getBoardView(); 
@@ -197,7 +197,7 @@ bool Board::isStaleMate(){
         else{ king = blackKing; playerPieces = &blackPieces;  opponentPieces = &whitePieces;}
 
         for(const auto &piece : *playerPieces){
-            if(piece->getName() == "King") continue;
+            if(piece->getName() == 'K') continue;
             piece->getAllValidMoves(layout);
             if(piece->validMoves.size() > 0){
                 inStaleMate = false;
@@ -239,7 +239,7 @@ void Board::updatePieceInfo(int curX, int curY, bool moved){
 }
 
 bool Board::moveCastling(int posX, int posY, int destX, int destY, bool undo){
-    if(layout[posX][posY] && layout[posX][posY]->getName() == "King" && !undo){
+    if(layout[posX][posY] && layout[posX][posY]->getName() == 'K' && !undo){
         if((destX == 6 && destY == 0) || (destX == 6 && destY == 7)){
             // change king
             layout[destX][destY] = layout[posX][posY];
@@ -260,27 +260,63 @@ bool Board::moveCastling(int posX, int posY, int destX, int destY, bool undo){
             updatePieceInfo(destX + 1,destY, true);
             layout[0][posY] = nullptr;
             return true;
-        }        
-    // undo move
-    }else if(layout[posX][posY] && layout[posX][posY]->getName() == "King" && undo){
-        if((destX == 6 && destY == 0) || (destX == 6 && destY == 7)){
-            layout[posX][posY] = layout[destX][destY];
-            updatePieceInfo(posX ,posY,true);
-            layout[destX][destY] = nullptr;
-            layout[7][posY] = layout[destX - 1][destY];
-            updatePieceInfo(7,posY,true);
-            layout[destX - 1][destY] = nullptr;
-        }else if((destX == 2 && destY == 0) || (destX == 2 && destY == 7)){
-            layout[posX][posY] = layout[destX][destY];
-            updatePieceInfo(posX ,posY,true);
-            layout[destX][destY] = nullptr;
-            layout[0][posY] = layout[destX - 1][destY];
-            updatePieceInfo(0,posY,true);
-            layout[destX - 1][destY] = nullptr;
-        }
+        }    
+    }
+    return false;
+}
 
+void Board::pushToUndoStack(){
+    // get a snapshot of all the pieces on the board
+    string snapshot = "";
+    for(int x = 0; x < 8; ++x){
+        for(int y = 0; y < 8; ++y){
+            if(layout[x][y]){
+                if (layout[x][y]->getColour() == 'w'){
+                    snapshot += layout[x][y]->getName() + to_string(layout[x][y]->getX())
+                                + to_string(layout[x][y]->getY()) + " "; 
+                }else{
+                    char name = layout[x][y]->getName() + 32;
+                    snapshot += name + to_string(layout[x][y]->getX())
+                                + to_string(layout[x][y]->getY()) + " "; 
+                }
+            } 
+        }
     }
 
+    if(snapshot != "") undoStack.push_back(snapshot);
+    return;
+}
+
+bool Board::undoMove(){
+    if(undoStack.size() == 0) return false;
+    //clear board
+    for(int x = 0; x < 8; ++x){
+        for(int y = 0; y < 8; ++y){
+            if(layout[x][y]) {
+                delete layout[x][y];
+                layout[x][y] = nullptr;
+            }
+        }
+    }
+    // set board to previous state
+    string undoMove = undoStack.back();
+    stringstream ss{undoMove};
+    char i;    
+    cout << undoMove << endl;
+    while(true){
+        ss >> i;
+        if(i == ' ') continue;
+        char piece = i;
+        ss >> i;
+        int x = i - '0';
+        ss >> i;
+        int y = i - '0';    
+        editBoard(to_string(piece), x , y);
+        undoMove = undoMove.substr(4);
+        if(undoMove.length() >= 4) continue;
+        else break;
+    }
+    undoStack.pop_back();
     return false;
 }
 
@@ -298,31 +334,23 @@ int Board::move(int posX, int posY, int destX, int destY, char turn, string prom
 
     // valid move
     if(layout[posX][posY]->move(destX,destY,layout)){
-        // temp variables
-        Piece *kill = nullptr;
-        bool tempMoved = layout[posX][posY]->getMoved();
-        bool castling = false;
-        Piece *tempPawn = nullptr;
-        bool pawnPromotion= false;
-        // pawn promotion
-        if(promote != "" && layout[posX][posY]->getName() == "Pawn"){
+        bool killed = false;       
+        // killing oppents piece
+        if(layout[destX][destY] != nullptr && (layout[posX][posY]->getColour() != layout[destX][destY]->getColour())) 
+            killed = true;
+
+         // pawn promotion
+        if(promote != "" && layout[posX][posY]->getName() == 'P'){
             cout << "promote" << endl;
-           if((layout[posX][posY]->getY() == 6 && destY == 7) || (layout[posX][posY]->getY() == 1 && destY == 0)){
-                if(posX - destX == 1 || posX - destX == -1) {kill = layout[destX][destY]; layout[destX][destY] = nullptr;}
-                tempPawn = layout[posX][posY];
-                layout[posX][posY] = nullptr;
-                pawnPromotion = true;
+           if((posY == 6 && destY == 7) || (posY == 1 && destY == 0)){
+                if(killed) layout[destX][destY] = nullptr;
+                layout[posX][posY] = nullptr;                
                 editBoard(promote, destX, destY);                
             }
         //castling
-        }else if(!isCheck() && moveCastling(posX,posY, destX, destY)){
-            cout << "castling" << endl;
-            castling = true;  
+        }else if(!isCheck() && moveCastling(posX,posY, destX, destY)) cout << "castling" << endl;            
         // all other moves              
-        }else{        
-            // killing oppents piece
-            if(layout[destX][destY] != nullptr && (layout[posX][posY]->getColour() != layout[destX][destY]->getColour())) 
-                kill = layout[destX][destY];
+        else{           
             // "physically moving the piece"
             layout[destX][destY] = layout[posX][posY];            
             // updating piece's information
@@ -333,31 +361,11 @@ int Board::move(int posX, int posY, int destX, int destY, char turn, string prom
         cout << "isCheck: " << isCheck() << endl;
         // if check undo move 
         if((inBlackCheck && turn == 'b') || (inWhiteCheck && turn == 'w')){            
-            if(pawnPromotion){
-                layout[posX][posY] = tempPawn;
-                delete layout[destX][destY];                
-                if(kill) layout[destX][destY] = kill;
-                else layout[destX][destY] = nullptr;
-                kill = nullptr;
-                getBoardView();                           
-            }else if(castling) {
-                moveCastling(posX, posY, destX, destY, true);
-            }else{
-                // reseting piece's info to original
-                layout[posX][posY] = layout[destX][destY];
-                updatePieceInfo(posX,posY,tempMoved);                        
-                layout[destX][destY] = kill;
-                kill = nullptr;
-            }              
+            undoMove();
             return 204;
         }else{ 
-            cout << "Moving " << layout[destX][destY]->getColour() + layout[destX][destY]->getName() << endl;   
-            // cleaning up;
-            int killed = 0;
-            int promotion = 0;  
-            if(kill){killed = 1; delete kill;}
-            if(tempPawn){promotion = 1; delete tempPawn;}
-
+            cout << "Moving " << layout[destX][destY]->getColour() << layout[destX][destY]->getName() << endl;   
+            // cleaning up;            
             getBoardView();
             if(isCheckMate()) return 90;
             if(isStaleMate()) return 91; 

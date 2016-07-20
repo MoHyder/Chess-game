@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-King::King(int curX,int curY, char colour, bool moved):Piece{curX,curY,"King",colour,moved}{}
+King::King(int curX,int curY, char colour, bool moved):Piece{curX,curY,'K',colour,moved}{}
 
 void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 	// swip clean original validMoves
@@ -24,7 +24,7 @@ void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 			 	break;
 			}		
 		
-		if(castleRight && layout[7][0] && layout[7][0]->getName() == "Rook" && layout[7][0]->getColour() == 'w')
+		if(castleRight && layout[7][0] && layout[7][0]->getName() == 'R' && layout[7][0]->getColour() == 'w')
 			validMoves.push_back("60");			
 
 		// left side
@@ -35,7 +35,7 @@ void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 			 	break;
 			}				
 					
-		if(castleLeft && layout[0][0] && layout[0][0]->getName() == "Rook" && layout[0][0]->getColour() == 'w')
+		if(castleLeft && layout[0][0] && layout[0][0]->getName() == 'R' && layout[0][0]->getColour() == 'w')
 			validMoves.push_back("20");		
 	}
 
@@ -49,7 +49,7 @@ void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 			 	break;
 			}		
 		
-		if(castleRight && layout[7][7] && layout[7][7]->getName() == "Rook" && layout[7][7]->getColour() == 'b')
+		if(castleRight && layout[7][7] && layout[7][7]->getName() == 'R' && layout[7][7]->getColour() == 'b')
 			validMoves.push_back("67");
 		
 		// left side
@@ -60,7 +60,7 @@ void King::getAllValidMoves(Piece* const layout[8][8],bool backedUp){
 			 	break;
 			}		
 		
-		if(castleLeft && layout[0][7] && layout[0][7]->getName() == "Rook" && layout[0][7]->getColour() == 'b')
+		if(castleLeft && layout[0][7] && layout[0][7]->getName() == 'R' && layout[0][7]->getColour() == 'b')
 			validMoves.push_back("27");
 		
 		

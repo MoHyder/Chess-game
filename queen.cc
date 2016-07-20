@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-Queen::Queen(int curX,int curY, char colour, bool moved):Piece{curX,curY,"Queen",colour,moved}{}
+Queen::Queen(int curX,int curY, char colour, bool moved):Piece{curX,curY,'Q',colour,moved}{}
 
 void Queen::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
 	// swip clean original validMoves
