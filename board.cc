@@ -16,21 +16,29 @@ using namespace std;
 Board::Board(){
     blackKing = nullptr;
     whiteKing = nullptr;
+    pieceInCheck = nullptr;
     inBlackCheck = false;
     inWhiteCheck = false;
     inStaleMate = false;
     inCheckMate = false;
+
+    // make array nullptr
+    for(int x = 0; x < 8; ++x)
+        for(int y = 0; y < 8; ++y)
+            layout[x][y] = nullptr;
+
 }
 
 void Board::getBoardView(){    
-    // getting white pieces and king
+    // getting all pieces and kings
     whitePieces.clear();
     blackPieces.clear(); 
     string colours = "wb";
     for(unsigned int c = 0; c < colours.length(); c++){ 
         char colour = colours[c];
         for(int x = 0; x < 8; ++x){
-            for(int y = 0; y < 8; ++y){            
+            for(int y = 0; y < 8; ++y){
+                // if(layout[x][y]) cout << layout[x][y]->getColour() << layout[x][y]->getName() << ": " << x << y << endl;
                 if(layout[x][y] && layout[x][y]->getColour() == colour){ 
                     if(colour == 'w') whitePieces.push_back(layout[x][y]);
                     else blackPieces.push_back(layout[x][y]);      
@@ -124,6 +132,7 @@ bool Board::editBoard(string piece, int posX, int posY){
 // check if either kings are in check
 bool Board::isCheck(){
     inBlackCheck = inWhiteCheck = false;
+    pieceInCheck = nullptr;
 
     string colours = "wb" ;
     for(unsigned int c = 0; c < colours.length(); c++){
@@ -133,16 +142,17 @@ bool Board::isCheck(){
         if(colour == 'w'){ king = whiteKing; pieces = &blackPieces;}
         else{king = blackKing; pieces = &whitePieces;}
 
-        for(const auto &piece : *pieces){
-            piece->getAllValidMoves(layout,true);        
+        for(const auto &piece : *pieces){                   
             for(const auto &pieceMove : piece->validMoves){
                 string kingXY = to_string(king->getX()) + to_string(king->getY());
                 if(kingXY == pieceMove){
                     inCheck = true;
+                    pieceInCheck = piece;
                     break;
                 }
-            }
-            if(inCheck) break;
+
+            } 
+            if(inCheck) break;           
         }
         if(inCheck && colour == 'w'){ inWhiteCheck = true; return true;}
         if(inCheck && colour == 'b'){ inBlackCheck = true; return true;}
@@ -153,23 +163,24 @@ bool Board::isCheck(){
 }
 
 bool Board::isCheckMate(){   
-    if(!(inBlackCheck || inWhiteCheck))  return false;
+    if(!(inBlackCheck || inWhiteCheck))  return false;    
     
     string colours = "wb" ;
     for(unsigned int c = 0; c < colours.length(); c++){
         inCheckMate = false;
-        Piece *king; vector<Piece *> *pieces;
+        Piece *king; vector<Piece *> *playerPieces; vector<Piece *> *opponentPieces;
         char colour = colours[c];
-        if(colour == 'w'){ king = whiteKing; pieces = &blackPieces;}
-        else{king = blackKing; pieces = &whitePieces;}
+        if(colour == 'w'){ king = whiteKing; opponentPieces = &blackPieces; playerPieces = &whitePieces;}
+        else{king = blackKing; opponentPieces = &whitePieces; playerPieces = &blackPieces;}
 
+        // checking if the king can move or kill
         for(const auto &kingMove : king->validMoves){
             inCheckMate = false;
-            for(const auto &piece : *pieces){ 
-                piece->getAllValidMoves(layout,true);    
-                for(const auto &pieceMove : piece->validMoves){                    
+            for(const auto &opponentPiece : *opponentPieces){ 
+                opponentPiece->getAllValidMoves(layout,true);    
+                for(const auto &pieceMove : opponentPiece->validMoves){                    
                     if(kingMove == pieceMove){
-                        cout << kingMove << " == " << pieceMove << " " << piece->getName() << endl;
+                        // cout << kingMove << " == " << pieceMove << " " << opponentPiece->getName() << endl;
                         inCheckMate = true;
                         break;
                     }
@@ -177,9 +188,27 @@ bool Board::isCheckMate(){
                 if(inCheckMate) break;               
             }
             if(!inCheckMate)break;
+        }        
+        if(inCheckMate && !pieceInCheck) return true;
+        getBoardView();
+
+        // checking if the piece that is causing the check can be killed
+        if(inCheckMate && pieceInCheck){            
+            inCheckMate = true;
+            for(const auto &playerPiece : *playerPieces){
+                if (playerPiece->getName() == 'K') continue;
+                for(const auto &pieceMove : playerPiece->validMoves){
+                    string pieceInCheckXY = to_string(pieceInCheck->getX()) + to_string(pieceInCheck->getY());
+                    if(pieceInCheckXY == pieceMove){
+                        inCheckMate = false;
+                        break;       
+                    }
+                }
+                if(!inCheckMate) break;
+            } 
         }
-        if(inCheckMate) return true;
-        getBoardView(); 
+
+        if(inCheckMate) return true;        
     }    
     return false;
 }
@@ -220,7 +249,6 @@ bool Board::isStaleMate(){
                     if(inStaleMate) break;            
                 }
                 if(!inStaleMate) break;
-
             }
         }
         if(inStaleMate) return true;
@@ -301,22 +329,15 @@ bool Board::undoMove(){
     // set board to previous state
     string undoMove = undoStack.back();
     stringstream ss{undoMove};
-    char i;    
-    cout << undoMove << endl;
-    while(true){
-        ss >> i;
-        if(i == ' ') continue;
-        char piece = i;
-        ss >> i;
-        int x = i - '0';
-        ss >> i;
-        int y = i - '0';    
-        editBoard(to_string(piece), x , y);
-        undoMove = undoMove.substr(4);
-        if(undoMove.length() >= 4) continue;
-        else break;
+    string i;    
+    while(ss >> i){        
+        string piece = i.substr(0,1);
+        int x = stoi(i.substr(1,1));
+        int y = stoi(i.substr(2,1));
+        editBoard(piece, x , y);        
     }
     undoStack.pop_back();
+    getBoardView();
     return false;
 }
 
@@ -334,6 +355,7 @@ int Board::move(int posX, int posY, int destX, int destY, char turn, string prom
 
     // valid move
     if(layout[posX][posY]->move(destX,destY,layout)){
+        pushToUndoStack();
         bool killed = false;       
         // killing oppents piece
         if(layout[destX][destY] != nullptr && (layout[posX][posY]->getColour() != layout[destX][destY]->getColour())) 
@@ -341,16 +363,14 @@ int Board::move(int posX, int posY, int destX, int destY, char turn, string prom
 
          // pawn promotion
         if(promote != "" && layout[posX][posY]->getName() == 'P'){
-            cout << "promote" << endl;
+            // cout << "promote" << endl;
            if((posY == 6 && destY == 7) || (posY == 1 && destY == 0)){
                 if(killed) layout[destX][destY] = nullptr;
                 layout[posX][posY] = nullptr;                
                 editBoard(promote, destX, destY);                
             }
-        //castling
-        }else if(!isCheck() && moveCastling(posX,posY, destX, destY)) cout << "castling" << endl;            
-        // all other moves              
-        else{           
+        //castling & any other move
+        }else if(!moveCastling(posX,posY, destX, destY)){           
             // "physically moving the piece"
             layout[destX][destY] = layout[posX][posY];            
             // updating piece's information
@@ -358,17 +378,19 @@ int Board::move(int posX, int posY, int destX, int destY, char turn, string prom
             layout[posX][posY] = nullptr;
         }              
         getBoardView();
-        cout << "isCheck: " << isCheck() << endl;
+        isCheck();
+        // cout << "isCheck: " << isCheck() << endl;
         // if check undo move 
         if((inBlackCheck && turn == 'b') || (inWhiteCheck && turn == 'w')){            
             undoMove();
             return 204;
         }else{ 
-            cout << "Moving " << layout[destX][destY]->getColour() << layout[destX][destY]->getName() << endl;   
+            // cout << "Moving " << layout[destX][destY]->getColour() << layout[destX][destY]->getName() << endl;   
             // cleaning up;            
             getBoardView();
             if(isCheckMate()) return 90;
-            if(isStaleMate()) return 91; 
+            if(isStaleMate()) return 91;
+            if(inBlackCheck || inWhiteCheck) return 102; 
             if(killed) return 101;            
             return 100;
         }        

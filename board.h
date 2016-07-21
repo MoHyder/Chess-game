@@ -6,11 +6,13 @@
 class Board {    
     Piece *blackKing;
     Piece *whiteKing;
+    // piece that are causing the check
+    Piece *pieceInCheck; 
     bool inWhiteCheck;
     bool inBlackCheck;   
     bool inStaleMate;
     bool inCheckMate;
-    std::vector<std::string> undoStack;   
+    std::vector<std::string> undoStack;    
 
 public:
     Piece *layout [8][8];       
