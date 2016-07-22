@@ -4,8 +4,6 @@
 #include <vector>
 
 class Board {    
-    Piece *blackKing;
-    Piece *whiteKing;
     // piece that are causing the check
     Piece *pieceInCheck; 
     bool inWhiteCheck;
@@ -18,6 +16,8 @@ public:
     Piece *layout [8][8];       
     std::vector <Piece *> blackPieces;
     std::vector <Piece *> whitePieces;
+    Piece *blackKing;
+    Piece *whiteKing;
     // functions 
     Board();
     void getBoardView();

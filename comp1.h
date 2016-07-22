@@ -31,23 +31,23 @@ public:
 					randomInt--;
 					continue;
 				}
-				vector<string> validMoves =  piece->validMoves;						
-				for(const auto move : validMoves){					
-					curX = piece->getX();
-					curY = piece->getY();
+				vector<string> validMoves =  piece->validMoves;
+				curX = piece->getX();
+				curY = piece->getY();						
+				for(const auto move : validMoves){				
 					desX = move[0] - '0';
-					desY = move[1] - '0';					
+					desY = move[1] - '0';
 					if (b->move(curX, curY, desX, desY, colour) <= 102) return true;					
 				}			
 			}			
 		}
-
-		// if three random moves do not work
+		
+		// if all three random moves do not work, make first legal move
 		for(const auto &piece : *myPieces){
-			vector<string> validMoves =  piece->validMoves;			
-			for(const auto &move : validMoves){
-				curX = piece->getX();
-				curY = piece->getY();
+			vector<string> validMoves =  piece->validMoves;
+			curX = piece->getX();
+			curY = piece->getY();			
+			for(const auto &move : validMoves){				
 				desX = move[0] - '0';
 				desY = move[1] - '0';				
 				if (b->move(curX, curY, desX, desY, colour) <= 102) return true;				

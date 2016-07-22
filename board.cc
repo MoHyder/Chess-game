@@ -41,7 +41,7 @@ void Board::getBoardView(){
                 if(layout[x][y] && layout[x][y]->getColour() == colour){ 
                     if(colour == 'w') whitePieces.push_back(layout[x][y]);
                     else blackPieces.push_back(layout[x][y]);      
-                    layout[x][y]->getAllValidMoves(layout);
+                    layout[x][y]->getAllValidMoves(layout);                    
                 }
                 if(layout[x][y] && layout[x][y]->getName() == 'K' && layout[x][y]->getColour() == colour) {
                     if(colour == 'w') whiteKing = layout[x][y];
@@ -153,12 +153,13 @@ bool Board::isCheck(){
             } 
             if(inCheck) break;           
         }
-        if(inCheck && colour == 'w'){ inWhiteCheck = true; return true;}
-        if(inCheck && colour == 'b'){ inBlackCheck = true; return true;}
+        if(inCheck && colour == 'w') inWhiteCheck = true;
+        if(inCheck && colour == 'b') inBlackCheck = true;
         getBoardView();         
     }
 
-    return false;  
+    if(inWhiteCheck || inBlackCheck) return true;
+    else return false;  
 }
 
 bool Board::isCheckMate(){   
