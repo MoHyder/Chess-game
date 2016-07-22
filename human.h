@@ -30,7 +30,7 @@ class Human: public Player {
     return true;
     } return false;
   }
-  Human(Board * b): Player(b) {}
+  Human(Board * b, char colour): Player(b, colour) {}
 };
 
 #endif
