@@ -342,33 +342,35 @@ bool Board::undoMove(){
 }
 
 // The move function returns an int depending if move was a success or a failure
-int Board::move(int posX, int posY, int destX, int destY, char turn, string promote){
+int Board::move(int posX, int posY, int destX, int destY, char turn){
     // gameover checkMate
-    if(inCheckMate) return 90;
+  //  if(inCheckMate) return 90; // will never issue once game is over
     // gameover Stale Mate
-    if(inStaleMate) return 91;
-    if(posX == destX && posY == destY) return 201;    
+  //  if(inStaleMate) return 91; // don't issue commands after games over
+    if(posX == destX && posY == destY) return 201; // false
     // if no piece exists
-    if(layout[posX][posY] == nullptr) return 202;
+    if(layout[posX][posY] == nullptr) return 202; // false
     // trying to move opponents piece
     if(!((layout[posX][posY]->getColour() == turn) || (layout[posX][posY]->getColour() == turn)))  return 203;
-
     // valid move
     if(layout[posX][posY]->move(destX,destY,layout)){
         pushToUndoStack();
-        bool killed = false;       
+        bool killed = false;
         // killing oppents piece
-        if(layout[destX][destY] != nullptr && (layout[posX][posY]->getColour() != layout[destX][destY]->getColour())) 
-            killed = true;
-
+        if(layout[destX][destY] != nullptr && (layout[posX][posY]->getColour() != layout[destX][destY]->getColour())) {
+           killed = true; // isn't this already checked????
+	   delete layout[destX][destY];
+	}
          // pawn promotion
-        if(promote != "" && layout[posX][posY]->getName() == 'P'){
+        if((destY == 0 || destY == 7) && layout[posX][posY]->getName() == 'P'){
             // cout << "promote" << endl;
-           if((posY == 6 && destY == 7) || (posY == 1 && destY == 0)){
+	   char promote;
+	   cin >> promote;
+           //if((posY == 6 && destY == 7) || (posY == 1 && destY == 0)){
                 if(killed) layout[destX][destY] = nullptr;
-                layout[posX][posY] = nullptr;                
+                layout[posX][posY] = nullptr;            
                 editBoard(promote, destX, destY);                
-            }
+            //}
         //castling & any other move
         }else if(!moveCastling(posX,posY, destX, destY)){           
             // "physically moving the piece"

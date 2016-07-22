@@ -27,7 +27,7 @@ public:
     bool moveCastling(int posX, int posY, int destX, int destY, bool undo = false);
     void pushToUndoStack();
     bool undoMove();
-    int move(int posX, int posY, int destX, int destY, char turn, std::string promote = "");
+    int move(int posX, int posY, int destX, int destY, char turn);
     bool isCheck();
     bool isCheckMate();
     bool isStaleMate();
