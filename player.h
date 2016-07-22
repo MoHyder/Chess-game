@@ -3,8 +3,10 @@
 #include <string>
 #include "board.h"
 using namespace std;
-class player {
-  Board &b;
-  bool move() = 0;
+class Player{
+  public: 
+  Board * b;
+  virtual bool move() = 0;
+  Player(Board * b): b(b) {}
 };
 #endif

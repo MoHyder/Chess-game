@@ -2,9 +2,11 @@
 #define _HUMAN_H_
 #include <iostream>
 #include <string>
+#include "player.h"
 #include "board.h"
 using namespace std;
-class human : public player {
+class Human: public Player {
+  public:
   bool move() {
     string command, cell1, cell2;
     cin >> command;
@@ -15,17 +17,20 @@ class human : public player {
     x2 = cell2[0] - 'a';
     y1 = cell1[1] - '1';
     y2 = cell2[1] - '1';
-    while (b.move(x1, y1, x2, y2) > 101 ) {
-      cin >> cell1 >> cell2;
-      x1 = cell1[0] - 'a';
-      x2 = cell2[0] - 'a';
-      y1 = cell1[1] - '1';
-      y2 = cell2[1] - '1';
-    }
-    return true
+    char type;
+    if (b->layout[x1][y1]) {
+      type = b->layout[x1][y1]->getName();
+      while (b->move(x1, y1, x2, y2, type) > 101 ) {
+        cin >> cell1 >> cell2;
+        x1 = cell1[0] - 'a';
+        x2 = cell2[0] - 'a';
+        y1 = cell1[1] - '1';
+        y2 = cell2[1] - '1';
+      }
+    return true;
+    } return false;
   }
-  player(Board &b) : b(b) {}
-  ~player(Board &b) {b = nullptr;}
+  Human(Board * b): Player(b) {}
 };
 
 #endif
