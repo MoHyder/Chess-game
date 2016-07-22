@@ -22,9 +22,9 @@ public:
     Board();
     void getBoardView();
     bool isDone();
-    bool editBoard(std::string piece, int posX, int posY);
+    bool editBoard(char piece, int posX, int posY);
     void updatePieceInfo(int curX, int curY, bool moved);
-    bool moveCastling(int posX, int posY, int destX, int destY, bool undo = false);
+    bool moveCastling(int posX, int posY, int destX, int destY);
     void pushToUndoStack();
     bool undoMove();
     int move(int posX, int posY, int destX, int destY, char turn);
@@ -34,4 +34,3 @@ public:
     ~Board();
 };
 #endif
-

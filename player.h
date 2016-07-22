@@ -3,10 +3,15 @@
 #include <string>
 #include "board.h"
 using namespace std;
-class Player{
-  public: 
-  Board * b;
-  virtual bool move() = 0;
-  Player(Board * b): b(b) {}
+
+class Player {
+protected:
+	Board *b;
+	const char colour;
+public:	
+	Player(Board * b, char colour): b{b}, colour{colour}{}
+	virtual ~Player(){}
+	virtual bool move() = 0;	
 };
+
 #endif

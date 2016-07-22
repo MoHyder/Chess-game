@@ -37,8 +37,7 @@ void Board::getBoardView(){
     for(unsigned int c = 0; c < colours.length(); c++){ 
         char colour = colours[c];
         for(int x = 0; x < 8; ++x){
-            for(int y = 0; y < 8; ++y){
-                // if(layout[x][y]) cout << layout[x][y]->getColour() << layout[x][y]->getName() << ": " << x << y << endl;
+            for(int y = 0; y < 8; ++y){                
                 if(layout[x][y] && layout[x][y]->getColour() == colour){ 
                     if(colour == 'w') whitePieces.push_back(layout[x][y]);
                     else blackPieces.push_back(layout[x][y]);      
@@ -50,7 +49,7 @@ void Board::getBoardView(){
                 }
             }
         } 
-    }  
+    }
 }
 
 // checking if board setup is done
@@ -79,49 +78,49 @@ bool Board::isDone(){
 }
 
 // adds and removes piece from Board
-bool Board::editBoard(string piece, int posX, int posY){
-    if(piece == "d"){
+bool Board::editBoard(char piece, int posX, int posY){
+    if(piece == 'd'){
         return isDone();
-    }else if(piece == "-" || layout[posX][posY]) {
+    }else if(piece == '-' || layout[posX][posY]) {
         // remove piece
         delete layout[posX][posY];
         layout[posX][posY] = nullptr;        
     }
 
     // adding new peices
-    if(piece == "K"){
+    if(piece == 'K'){
         bool moved = false;
         if(posX != 4 && posY != 0) moved = true;
         layout[posX][posY] = new King(posX,posY,'w',moved); 
-    }else if(piece == "Q"){
+    }else if(piece == 'Q'){
         layout[posX][posY] = new Queen(posX,posY,'w');
-    }else if(piece == "B"){
+    }else if(piece == 'B'){
         layout[posX][posY] = new Bishop(posX,posY,'w');
-    }else if(piece == "N"){
+    }else if(piece == 'N'){
         layout[posX][posY] = new Knight(posX,posY,'w');
-    }else if (piece == "R"){
+    }else if (piece == 'R'){
         bool moved = false;
         if((posX != 0 && posY != 0) || (posX != 7 && posY != 0)) moved = true;
         layout[posX][posY] = new Rook(posX,posY,'w',moved);
-    }else if(piece == "P"){
+    }else if(piece == 'P'){
         bool moved = false;
         if(posY != 1 ) moved = true;
         layout[posX][posY] = new Pawn(posX,posY,'w',moved);
-    }else if(piece == "k"){
+    }else if(piece == 'k'){
         bool moved = false;
         if(posX != 4 && posY != 7) moved = true;
         layout[posX][posY] = new King(posX,posY,'b',moved);        
-    }else if(piece == "q"){
+    }else if(piece == 'q'){
         layout[posX][posY] = new Queen(posX,posY,'b');
-    }else if(piece == "b"){
+    }else if(piece == 'b'){
         layout[posX][posY] = new Bishop(posX,posY,'b');
-    }else if(piece == "n"){
+    }else if(piece == 'n'){
         layout[posX][posY] = new Knight(posX,posY,'b');
-    }else if(piece == "r"){
+    }else if(piece == 'r'){
         bool moved = false;
         if((posX != 0 && posY != 7) || (posX != 7 && posY != 7)) moved = true;
         layout[posX][posY] = new Rook(posX,posY,'b',moved);
-    }else if(piece == "p"){
+    }else if(piece == 'p'){
         bool moved = false;
         if(posY != 6) moved = true;
         layout[posX][posY] = new Pawn(posX,posY,'b',moved);
@@ -179,8 +178,7 @@ bool Board::isCheckMate(){
             for(const auto &opponentPiece : *opponentPieces){ 
                 opponentPiece->getAllValidMoves(layout,true);    
                 for(const auto &pieceMove : opponentPiece->validMoves){                    
-                    if(kingMove == pieceMove){
-                        // cout << kingMove << " == " << pieceMove << " " << opponentPiece->getName() << endl;
+                    if(kingMove == pieceMove){                        
                         inCheckMate = true;
                         break;
                     }
@@ -266,8 +264,8 @@ void Board::updatePieceInfo(int curX, int curY, bool moved){
     return;
 }
 
-bool Board::moveCastling(int posX, int posY, int destX, int destY, bool undo){
-    if(layout[posX][posY] && layout[posX][posY]->getName() == 'K' && !undo){
+bool Board::moveCastling(int posX, int posY, int destX, int destY){
+    if(layout[posX][posY] && layout[posX][posY]->getName() == 'K' && !layout[posX][posY]->getMoved()){
         if((destX == 6 && destY == 0) || (destX == 6 && destY == 7)){
             // change king
             layout[destX][destY] = layout[posX][posY];
@@ -315,7 +313,7 @@ void Board::pushToUndoStack(){
     return;
 }
 
-bool Board::undoMove(){
+bool Board::undoMove(){    
     if(undoStack.size() == 0) return false;
     //clear board
     for(int x = 0; x < 8; ++x){
@@ -329,29 +327,28 @@ bool Board::undoMove(){
     // set board to previous state
     string undoMove = undoStack.back();
     stringstream ss{undoMove};
-    string i;    
-    while(ss >> i){        
-        string piece = i.substr(0,1);
-        int x = stoi(i.substr(1,1));
-        int y = stoi(i.substr(2,1));
+    char i;    
+    while(ss >> i){
+        if(i == ' ') continue;
+        char piece = i;
+        ss >> i;
+        int x = i - '0';
+        ss >> i;
+        int y = i - '0';        
         editBoard(piece, x , y);        
     }
     undoStack.pop_back();
-    getBoardView();
+    getBoardView();    
     return false;
 }
 
 // The move function returns an int depending if move was a success or a failure
-int Board::move(int posX, int posY, int destX, int destY, char turn){
-    // gameover checkMate
-  //  if(inCheckMate) return 90; // will never issue once game is over
-    // gameover Stale Mate
-  //  if(inStaleMate) return 91; // don't issue commands after games over
+int Board::move(int posX, int posY, int destX, int destY, char turn){    
     if(posX == destX && posY == destY) return 201; // false
     // if no piece exists
     if(layout[posX][posY] == nullptr) return 202; // false
     // trying to move opponents piece
-    if(!((layout[posX][posY]->getColour() == turn) || (layout[posX][posY]->getColour() == turn)))  return 203;
+    if(layout[posX][posY]->getColour() != turn)  return 203;  
     // valid move
     if(layout[posX][posY]->move(destX,destY,layout)){
         pushToUndoStack();
@@ -359,35 +356,30 @@ int Board::move(int posX, int posY, int destX, int destY, char turn){
         // killing oppents piece
         if(layout[destX][destY] != nullptr && (layout[posX][posY]->getColour() != layout[destX][destY]->getColour())) {
            killed = true; // isn't this already checked????
-	   delete layout[destX][destY];
-	}
-         // pawn promotion
+           delete layout[destX][destY];
+           layout[destX][destY] = nullptr;
+        }
+        // pawn promotion
         if((destY == 0 || destY == 7) && layout[posX][posY]->getName() == 'P'){
-            // cout << "promote" << endl;
-	   char promote;
-	   cin >> promote;
-           //if((posY == 6 && destY == 7) || (posY == 1 && destY == 0)){
-                if(killed) layout[destX][destY] = nullptr;
-                layout[posX][posY] = nullptr;            
-                editBoard(promote, destX, destY);                
-            //}
-        //castling & any other move
+            char promote;
+            cin >> promote;
+            layout[posX][posY] = nullptr;            
+            editBoard(promote, destX, destY);
+        // castling & any other move
         }else if(!moveCastling(posX,posY, destX, destY)){           
             // "physically moving the piece"
             layout[destX][destY] = layout[posX][posY];            
             // updating piece's information
             updatePieceInfo(destX,destY,true);
             layout[posX][posY] = nullptr;
-        }              
+        }        
         getBoardView();
-        isCheck();
-        // cout << "isCheck: " << isCheck() << endl;
+        isCheck(); 
         // if check undo move 
         if((inBlackCheck && turn == 'b') || (inWhiteCheck && turn == 'w')){            
             undoMove();
             return 204;
-        }else{ 
-            // cout << "Moving " << layout[destX][destY]->getColour() << layout[destX][destY]->getName() << endl;   
+        }else{           
             // cleaning up;            
             getBoardView();
             if(isCheckMate()) return 90;
