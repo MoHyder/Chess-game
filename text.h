@@ -11,7 +11,8 @@ public:
 
     void draw(){
         bool squareBlack = false;
-        for(int y = 7; y >= 0 ; y--){       
+        for(int y = 7; y >= 0 ; y--){
+	    cout << y + 1 << " ";
             for(int x = 0; x < 8; x++){     
                 if(b->layout[x][y] != nullptr){
                     if(b->layout[x][y]->getColour() == 'w') cout << b->layout[x][y]->getName();
@@ -27,6 +28,7 @@ public:
             squareBlack = !squareBlack; 
             cout << endl;
         }
+	cout << endl << "  abcdefgh" << endl;
     }
 };
 
