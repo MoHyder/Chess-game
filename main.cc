@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include "board.h"
 
 #include "piece.h"
@@ -14,94 +15,121 @@
 #include "player.h"
 #include "human.h"
 #include "comp1.h"
+#include "comp2.h"
 
 #include "view.h"
 #include "text.h"
+#include "graphic.h"
 
 using namespace std;
 
+
+Board b{};
+
+bool setup(string c){	
+	istream *in = &cin;
+	ifstream fin;
+
+	// read from file			
+	if("lff" == c){
+		cout << "ENTER FILE NAME:" << endl;
+		cin >> c;		
+		fin = ifstream{c};
+		// change input method to file
+		in = &fin; 
+	}else if("game" == c){
+		fin = ifstream{"defaultBoard.in"};
+		in = &fin; 
+	}
+
+	while (*in >> c) {
+		if (c == "done" && b.isDone()) {return true;}
+		else if (c == "+") {
+		  	*in >> c;
+		  	string x;
+		  	*in >> x;
+				int xpos, ypos;
+				xpos = x[0] - 'a';
+				ypos = x[1] - '1';
+		  	b.editBoard(c[0], xpos, ypos);
+		} else if (c == "-") {
+		  	*in >> c;
+			int xpos, ypos;
+				xpos = c[0] - 'a';
+				ypos = c[1] - '1';
+				b.editBoard(c[0], xpos, ypos);	      	
+		}else cout << "TRY AGAIN" << endl;
+	}
+
+	return false;	
+}
+
+
 int main() {
-  string c;
-  Player *white;
-  Player *black;
-  Player *current;
-//  int whitescore = 0;
-//  int blackscore = 0;
-  Board * board = new Board();
-  Text view = Text(board);
-  bool whiteturn = true;
-  while (cin >> c) {
-    if ("game" == c) {
-      for (int i = 0; i < 8; i++) {
-	board->editBoard('p',1,i);
-	board->editBoard('P',6,i);
-      }
-        board->editBoard('r',0,0);
-        board->editBoard('n',0,1);
-        board->editBoard('b',0,2);
-	board->editBoard('q',0,3);
-        board->editBoard('k',0,4);
-        board->editBoard('b',0,5);
-        board->editBoard('n',0,6);
-        board->editBoard('r',0,7);
-        board->editBoard('R',0,0);
-        board->editBoard('N',0,1);
-        board->editBoard('B',0,2);
-        board->editBoard('Q',0,3);
-        board->editBoard('K',0,4);
-        board->editBoard('B',0,5);
-        board->editBoard('N',0,6);
-        board->editBoard('R',0,7);
-      cin >> c;
-      if (c == "human") {
-        white = new Human(board, 'w');
-      } else if (c == "computer[1]") {
-	white = new Comp1(board, 'w');
-      } //else if (c == "computer[2]") {
-	//white = new AI2(board);
-     // }
-      cin >> c;
-      if (c == "human") {
-	black = new Human(board, 'b');
-      } else if (c == "computer[1]") {
-	black = new Comp1(board, 'b');
-      }
-      current = white;
-    }
-    if ("setup" == c) {
-      while (cin >> c) {
-        if (c == "done") {break;}
-        else if (c == "+") {
-          cin >> c;
-          string x;
-          cin >> x;
-	  int xpos, ypos;
-	  xpos = x[0] - 'a';
-	  ypos = x[1] - '1';
-          board->editBoard(c[0], xpos, ypos);
-        } else if (c == "-") {
-          cin >> c;
-	  int xpos, ypos;
-	  xpos = c[0] - 'a';
-	  ypos = c[1] - '1';
-          delete board->layout[xpos][ypos];
-	  board->layout[xpos][ypos] = nullptr;
-        }
-      }
-    }
-    view.draw();
-    while (! board->isCheckMate() || ! board->isStaleMate()) {
-      if (! current->move()) {
-        break;
-      }
-      view.draw();
-      if (whiteturn) {
-        whiteturn = false;
-        current = black;
-      } else {
-	whiteturn = true;
-	current = white;
-      }
-    }
-  }
+	string c;
+	Player *white;
+	Player *black;
+	Player *current;
+	int whitescore = 0;
+	int blackscore = 0;
+	Text view {&b};
+	bool whiteTurn = true;
+	bool lff = false;	
+	while (true) {
+		cout << "PLEASE ENTER" << endl;
+		cout << "1) lff :To load from file" << endl;
+		cout << "2) setup :To setup board" << endl;  	
+		cout << "3) game :To start game" << endl;
+		cin >> c;
+		if(cin.fail()) break;		
+		if ("setup" == c || "lff" == c) {
+			if("lff" == c) lff = true;
+			setup(c);
+			view.draw();
+		}		
+		if("game" == c){
+			cout << "WHITE PLAYER, PLEASE ENTER:" << endl;
+	  		cout << "1) human" << endl;
+	  		cout << "2) computer[1]" << endl;
+	  		cout << "3) computer[2]" << endl;
+	  		cin >> c;
+			if (c == "human") white = new Human(&b, 'w');
+			else if (c == "computer[1]") white = new Comp1(&b, 'w');
+			else if (c == "computer[2]") white = new Comp2(&b,'w');
+			cout << "BLACK PLAYER" << endl;	  		
+	  		cin >> c;
+			if (c == "human") black = new Human(&b, 'b');
+			else if (c == "computer[1]") black = new Comp1(&b, 'b');
+			else if (c == "computer[2]") black = new Comp2(&b,'b');			
+		  	current = white;
+
+			cout << "STARTING GAME" << endl;
+			if(!lff) {setup("game"); view.draw();}
+
+			while (!b.isCheckMate() || !b.isStaleMate()) {
+				if(whiteTurn) cout << "ENTER WHITE'S MOVE:" << endl;
+				else cout << "ENTER BLACK'S MOVE:" << endl;
+
+				if (!current->move())break;		
+				view.draw();
+
+				whiteTurn = !whiteTurn;
+
+				if (whiteTurn) current = white;
+				else current = black;				
+			}
+
+			// updating score
+			if(b.isStaleMate()){whitescore += 0.5; blackscore += 0.5;}
+			else if(whiteTurn) whitescore++;
+			else blackscore++;
+			break;			
+		}
+	}
+
+	cout << "Final Score" << endl;
+	cout << "White: " << whitescore << endl;
+	cout << "Black: " << blackscore << endl;	
+
+	return 0;
 }

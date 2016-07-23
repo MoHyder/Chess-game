@@ -19,7 +19,7 @@ public:
     Piece *blackKing;
     Piece *whiteKing;
     // functions 
-    Board();
+    Board();    
     void getBoardView();
     bool isDone();
     bool editBoard(char piece, int posX, int posY);

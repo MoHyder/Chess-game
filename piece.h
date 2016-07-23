@@ -43,7 +43,7 @@ public:
 	char getName(){return name;}
 	void setX(int x){curX = x;}
 	void setY(int y){curY = y;}
-	void setMoved(bool moved){moved = moved;};
+	void setMoved(bool move){moved = move;};
 
 	virtual void getAllValidMoves(Piece* const layout[8][8], bool backedUp = false) = 0;
 	virtual bool move(int destX, int destY, Piece* const layout[8][8]) = 0;	

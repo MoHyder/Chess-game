@@ -8,10 +8,11 @@ Pawn::Pawn(int curX,int curY, char colour, bool moved):Piece{curX,curY,'P',colou
 	
 
 void Pawn::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
-	int multiplier = 1;
-	if (colour == 'b') multiplier = -1;
 	// swip clean original validMoves
 	validMoves.clear();
+	
+	int multiplier = 1;
+	if (colour == 'b') multiplier = -1;	
 	int x = curX;
 	int y = curY + (multiplier  * 1);
 	// two steps	
@@ -30,7 +31,7 @@ bool Pawn::move(int destX, int destY, Piece* const layout[8][8]){
 	getAllValidMoves(layout);
 	// iterate validMoves and check if position is equal to any one of them
 	for(const auto &validPosition : validMoves){
-		if (validPosition == (to_string(destX) + to_string(destY))){			
+		if (validPosition == (to_string(destX) + to_string(destY))){						
 			return true;
 		}
 	}	

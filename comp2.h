@@ -27,7 +27,6 @@ public:
 			oppKing = b->whiteKing;
 		}
 
-
 		// checking if any oppentents piece can be killed
 		for(const auto &oppPiece : *oppPieces){
 			for(const auto &myPiece : *myPieces){
@@ -56,7 +55,6 @@ public:
 				}
 		}
 		
-
 		// if all fails, do first legal move
 		for(const auto &piece : *myPieces){
 			vector<string> validMoves = piece->validMoves;

@@ -19,13 +19,15 @@ public:
 		if(colour == 'w') myPieces = &(b->whitePieces);
 		else myPieces = &(b->blackPieces);
 
+		cout << "Comp1 Random move" << endl;
+
 		//truely random moves
 		int tries = 3;
 		while(tries >= 0){
 			tries--;			
 			srand(time(0));
 			// generate random number
-			randomInt = rand() % myPieces->size();			
+			randomInt = rand() % myPieces->size();
 			for(const auto piece : *myPieces){
 				if(randomInt != 0){
 					randomInt--;
@@ -42,6 +44,8 @@ public:
 			}			
 		}
 		
+		cout << "Comp1 legal move" << endl;
+
 		// if all three random moves do not work, make first legal move
 		for(const auto &piece : *myPieces){
 			vector<string> validMoves =  piece->validMoves;

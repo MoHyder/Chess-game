@@ -29,12 +29,12 @@ Board::Board(){
 
 }
 
-void Board::getBoardView(){    
+void Board::getBoardView(){
     // getting all pieces and kings
     whitePieces.clear();
     blackPieces.clear(); 
     string colours = "wb";
-    for(unsigned int c = 0; c < colours.length(); c++){ 
+    for(unsigned int c = 0; c < 2; c++){ 
         char colour = colours[c];
         for(int x = 0; x < 8; ++x){
             for(int y = 0; y < 8; ++y){                
@@ -49,15 +49,15 @@ void Board::getBoardView(){
                 }
             }
         } 
-    }
+    }    
+    return; 
 }
 
 // checking if board setup is done
 bool Board::isDone(){
-    if(isCheck()) return false;
     //checking if there is only one of each king
     string colours = "wb" ;
-    for(unsigned int c = 0; c < colours.length(); c++){
+    for(unsigned int c = 0; c < 2; c++){
         char colour = colours[c]; 
         int count = 0;
         for(int x = 0; x < 8; ++x)
@@ -66,7 +66,7 @@ bool Board::isDone(){
                     count++;
             
         if(count != 1) return false;
-    }
+    }    
     //checking if no pawns in the last rows of the board
     for(int x = 0; x < 8; ++x)
         if(layout[x][7] && layout[x][7]->getName() == 'P') return false;
@@ -74,6 +74,7 @@ bool Board::isDone(){
         if(layout[x][0] && layout[x][0]->getName() == 'P') return false;
 
     getBoardView();
+    if(isCheck()) return false;
     return true;          
 }
 
@@ -81,8 +82,7 @@ bool Board::isDone(){
 bool Board::editBoard(char piece, int posX, int posY){
     if(piece == 'd'){
         return isDone();
-    }else if(piece == '-' || layout[posX][posY]) {
-        // remove piece
+    }else if((piece == '-' && layout[posX][posY]) || layout[posX][posY]) {        
         delete layout[posX][posY];
         layout[posX][posY] = nullptr;        
     }
@@ -131,8 +131,8 @@ bool Board::editBoard(char piece, int posX, int posY){
 // check if either kings are in check
 bool Board::isCheck(){
     inBlackCheck = inWhiteCheck = false;
+    // piece that is causing the check
     pieceInCheck = nullptr;
-
     string colours = "wb" ;
     for(unsigned int c = 0; c < colours.length(); c++){
         bool inCheck = false;
@@ -158,8 +158,7 @@ bool Board::isCheck(){
         getBoardView();         
     }
 
-    if(inWhiteCheck || inBlackCheck) return true;
-    else return false;  
+    return (inBlackCheck || inWhiteCheck);
 }
 
 bool Board::isCheckMate(){   
