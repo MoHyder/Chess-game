@@ -112,7 +112,7 @@ int main() {
  				if (whiteTurn) current = white;
  				else current = black;
  
- 				current->move();
+ 				if (! current->move()) resigned = true;
  				if(b.isCheckMate()) inCheckMate = true;
  				if(b.isStaleMate()) inStaleMate = true;				
  				view.draw();
