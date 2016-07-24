@@ -89,9 +89,9 @@ bool Board::editBoard(char piece, int posX, int posY){
 
     // adding new peices
     if(piece == 'K'){
-        bool moved = false;
-        if(posX != 4 && posY != 0) moved = true;
-        layout[posX][posY] = new King(posX,posY,'w',moved); 
+        bool moved = true;
+        if(posX == 4 && posY == 0) moved = false;
+        layout[posX][posY] = new King(posX,posY,'w',moved);          
     }else if(piece == 'Q'){
         layout[posX][posY] = new Queen(posX,posY,'w');
     }else if(piece == 'B'){
@@ -99,16 +99,16 @@ bool Board::editBoard(char piece, int posX, int posY){
     }else if(piece == 'N'){
         layout[posX][posY] = new Knight(posX,posY,'w');
     }else if (piece == 'R'){
-        bool moved = false;
-        if((posX != 0 && posY != 0) || (posX != 7 && posY != 0)) moved = true;
+        bool moved = true;
+        if((posX == 0 && posY == 0) || (posX == 7 && posY == 0)) moved = false;
         layout[posX][posY] = new Rook(posX,posY,'w',moved);
     }else if(piece == 'P'){
         bool moved = false;
         if(posY != 1 ) moved = true;
         layout[posX][posY] = new Pawn(posX,posY,'w',moved);
     }else if(piece == 'k'){
-        bool moved = false;
-        if(posX != 4 && posY != 7) moved = true;
+        bool moved = true;
+        if(posX == 4 && posY == 7) moved = false;
         layout[posX][posY] = new King(posX,posY,'b',moved);        
     }else if(piece == 'q'){
         layout[posX][posY] = new Queen(posX,posY,'b');
@@ -117,8 +117,8 @@ bool Board::editBoard(char piece, int posX, int posY){
     }else if(piece == 'n'){
         layout[posX][posY] = new Knight(posX,posY,'b');
     }else if(piece == 'r'){
-        bool moved = false;
-        if((posX != 0 && posY != 7) || (posX != 7 && posY != 7)) moved = true;
+        bool moved = true;
+        if((posX == 0 && posY == 7) || (posX == 7 && posY == 7)) moved = false;
         layout[posX][posY] = new Rook(posX,posY,'b',moved);
     }else if(piece == 'p'){
         bool moved = false;
@@ -156,104 +156,67 @@ bool Board::isCheck(){
         if(inCheck && colour == 'w') inWhiteCheck = true;
         if(inCheck && colour == 'b') inBlackCheck = true;
         getBoardView();         
-    }
-
+    }    
     return (inBlackCheck || inWhiteCheck);
 }
 
 bool Board::isCheckMate(){   
     if(!(inBlackCheck || inWhiteCheck))  return false;    
     
-    string colours = "wb" ;
-    for(unsigned int c = 0; c < colours.length(); c++){
-        inCheckMate = false;
-        Piece *king; vector<Piece *> *playerPieces; vector<Piece *> *opponentPieces;
-        char colour = colours[c];
-        if(colour == 'w'){ king = whiteKing; opponentPieces = &blackPieces; playerPieces = &whitePieces;}
-        else{king = blackKing; opponentPieces = &whitePieces; playerPieces = &blackPieces;}
+    inCheckMate = true;
+    vector<Piece *> *opponentPieces;
+    if(turn == 'w') opponentPieces = &blackPieces ;
+    else opponentPieces = &whitePieces;
 
-        // checking if the king can move or kill
-        for(const auto &kingMove : king->validMoves){
-            inCheckMate = false;
-            for(const auto &opponentPiece : *opponentPieces){ 
-                opponentPiece->getAllValidMoves(layout,true);    
-                for(const auto &pieceMove : opponentPiece->validMoves){                    
-                    if(kingMove == pieceMove){                        
-                        inCheckMate = true;
-                        break;
-                    }
-                } 
-                if(inCheckMate) break;               
+    // check if any move can be made by any piece
+    for(auto &piece : *opponentPieces){
+        vector<string> validMoves = piece->validMoves;
+        int curX = piece->getX();
+        int curY = piece->getY();   
+        for(auto &validMove : validMoves){
+            int desX = validMove[0] - '0';
+            int desY = validMove[1] - '0';
+            int result = move(curX, curY, desX, desY, piece->getColour(),true);
+            if(result <= 102){                    
+                undoMove();
+                inCheckMate = false;
+                break;
             }
-            if(!inCheckMate)break;
-        }        
-        if(inCheckMate && !pieceInCheck) return true;
-        getBoardView();
-
-        // checking if the piece that is causing the check can be killed
-        if(inCheckMate && pieceInCheck){            
-            inCheckMate = true;
-            for(const auto &playerPiece : *playerPieces){
-                if (playerPiece->getName() == 'K') continue;
-                for(const auto &pieceMove : playerPiece->validMoves){
-                    string pieceInCheckXY = to_string(pieceInCheck->getX()) + to_string(pieceInCheck->getY());
-                    if(pieceInCheckXY == pieceMove){
-                        inCheckMate = false;
-                        break;       
-                    }
-                }
-                if(!inCheckMate) break;
-            } 
         }
-
-        if(inCheckMate) return true;        
-    }    
-    return false;
+        if(!inCheckMate) break;            
+    }
+       
+    return inCheckMate;
 }
 
 
 bool Board::isStaleMate(){
     if(inBlackCheck || inWhiteCheck) return false;
+    
+    inStaleMate = true;
+    vector<Piece *> *opponentPieces;
+    if(turn == 'w') opponentPieces = &blackPieces;
+    else opponentPieces = &whitePieces;
 
-    string colours = "wb" ;
-    for(unsigned int c = 0; c < colours.length(); c++){
-        inStaleMate = true;
-        Piece *king; vector<Piece *> *playerPieces; vector<Piece *> *opponentPieces;
-        char colour = colours[c];
-        if(colour == 'w'){ king = whiteKing; playerPieces = &whitePieces;  opponentPieces = &blackPieces;}
-        else{ king = blackKing; playerPieces = &blackPieces;  opponentPieces = &whitePieces;}
-
-        for(const auto &piece : *playerPieces){
-            if(piece->getName() == 'K') continue;
-            piece->getAllValidMoves(layout);
-            if(piece->validMoves.size() > 0){
+    // check if any move can be made by any piece
+    for(auto &piece : *opponentPieces){
+        vector<string> validMoves = piece->validMoves;
+        int curX = piece->getX();
+        int curY = piece->getY();   
+        for(auto &validMove : validMoves){
+            int desX = validMove[0] - '0';
+            int desY = validMove[1] - '0';
+            int result = move(curX, curY, desX, desY, piece->getColour(),true);
+            if(result <= 102){                    
+                undoMove();
                 inStaleMate = false;
                 break;
             }
         }
+        if(!inStaleMate) break;            
+    }   
 
-        if (inStaleMate){
-            for(const auto &kingMove : king->validMoves){
-                inStaleMate = false;
-                for(const auto &piece : *opponentPieces){
-                    piece->getAllValidMoves(layout,true);
-                    for(const auto &pieceMove : piece->validMoves){
-                        if(kingMove == pieceMove){
-                            inStaleMate = true;
-                            break;
-                        }
-                    }
-                    
-                    if(inStaleMate) break;            
-                }
-                if(!inStaleMate) break;
-            }
-        }
-        if(inStaleMate) return true;
-        getBoardView();
-    } 
-
-    return false;
+    return inStaleMate;
 
 }
 
@@ -265,7 +228,7 @@ void Board::updatePieceInfo(int curX, int curY, bool moved){
 }
 
 bool Board::moveCastling(int posX, int posY, int destX, int destY){
-    if(layout[posX][posY] && layout[posX][posY]->getName() == 'K' && !layout[posX][posY]->getMoved()){
+    if(layout[posX][posY] && layout[posX][posY]->getName() == 'K' && !layout[posX][posY]->getMoved()){        
         if((destX == 6 && destY == 0) || (destX == 6 && destY == 7)){
             // change king
             layout[destX][destY] = layout[posX][posY];
@@ -288,6 +251,7 @@ bool Board::moveCastling(int posX, int posY, int destX, int destY){
             return true;
         }    
     }
+
     return false;
 }
 
@@ -315,7 +279,7 @@ void Board::pushToUndoStack(){
 
 bool Board::undoMove(){    
     if(undoStack.size() == 0) return false;
-    //clear board
+    //clar board
     for(int x = 0; x < 8; ++x){
         for(int y = 0; y < 8; ++y){
             if(layout[x][y]) {
@@ -324,6 +288,7 @@ bool Board::undoMove(){
             }
         }
     }
+    
     // set board to previous state
     string undoMove = undoStack.back();
     stringstream ss{undoMove};
@@ -343,47 +308,53 @@ bool Board::undoMove(){
 }
 
 // The move function returns an int depending if move was a success or a failure
-int Board::move(int posX, int posY, int destX, int destY, char turn){    
+int Board::move(int posX, int posY, int destX, int destY, char turn, bool testing){
     if(posX == destX && posY == destY) return 201; // false
     // if no piece exists
     if(layout[posX][posY] == nullptr) return 202; // false
     // trying to move opponents piece
-    if(layout[posX][posY]->getColour() != turn)  return 203;  
+    if(layout[posX][posY]->getColour() != turn)  return 203;
     // valid move
     if(layout[posX][posY]->move(destX,destY,layout)){
         pushToUndoStack();
         bool killed = false;
         // killing oppents piece
         if(layout[destX][destY] != nullptr && (layout[posX][posY]->getColour() != layout[destX][destY]->getColour())) {
-           killed = true; // isn't this already checked????
+           killed = true;
            delete layout[destX][destY];
            layout[destX][destY] = nullptr;
         }
         // pawn promotion
         if((destY == 0 || destY == 7) && layout[posX][posY]->getName() == 'P'){
+
             char promote;
-            cin >> promote;
+            if(!testing) cin >> promote;
+            else if(turn == 'b') promote = layout[posX][posY]->getName() + 'a';
+            else promote = layout[posX][posY]->getName();
             layout[posX][posY] = nullptr;            
             editBoard(promote, destX, destY);
-        // castling & any other move
-        }else if(!moveCastling(posX,posY, destX, destY)){           
-            // "physically moving the piece"
+
+        // castling & any other move        
+        }else if(!moveCastling(posX,posY, destX, destY)){
+
+           // "physically moving the piece"
             layout[destX][destY] = layout[posX][posY];            
             // updating piece's information
             updatePieceInfo(destX,destY,true);
-            layout[posX][posY] = nullptr;
-        }        
+            layout[posX][posY] = nullptr; 
+        } 
+
         getBoardView();
-        isCheck(); 
+        isCheck();       
+
         // if check undo move 
-        if((inBlackCheck && turn == 'b') || (inWhiteCheck && turn == 'w')){            
+        if((inBlackCheck && turn == 'b') || (inWhiteCheck && turn == 'w')){
             undoMove();
             return 204;
         }else{           
-            // cleaning up;            
+            // cleaning up;
+            this->turn = turn;                        
             getBoardView();
-            if(isCheckMate()) return 90;
-            if(isStaleMate()) return 91;
             if(inBlackCheck || inWhiteCheck) return 102; 
             if(killed) return 101;            
             return 100;

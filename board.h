@@ -7,9 +7,10 @@ class Board {
     // piece that are causing the check
     Piece *pieceInCheck; 
     bool inWhiteCheck;
-    bool inBlackCheck;   
-    bool inStaleMate;
+    bool inBlackCheck;
     bool inCheckMate;
+    bool inStaleMate;    
+    char turn;
     std::vector<std::string> undoStack;    
 
 public:
@@ -17,7 +18,7 @@ public:
     std::vector <Piece *> blackPieces;
     std::vector <Piece *> whitePieces;
     Piece *blackKing;
-    Piece *whiteKing;
+    Piece *whiteKing;        
     // functions 
     Board();    
     void getBoardView();
@@ -27,7 +28,7 @@ public:
     bool moveCastling(int posX, int posY, int destX, int destY);
     void pushToUndoStack();
     bool undoMove();
-    int move(int posX, int posY, int destX, int destY, char turn);
+    int move(int posX, int posY, int destX, int destY, char turn,bool testing = false);
     bool isCheck();
     bool isCheckMate();
     bool isStaleMate();

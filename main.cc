@@ -66,8 +66,8 @@ int main() {
  	Player *white;
  	Player *black;
  	Player *current;
- 	int whitescore = 0;
- 	int blackscore = 0;
+ 	float whitescore = 0;
+ 	float blackscore = 0;
  	Text view {&b}; 	
  	bool lff = false;	
  	while (true) {
@@ -102,25 +102,30 @@ int main() {
  			if(!lff) {setup("game"); view.draw();}
  			
  			bool resigned = false;
- 			while (!b.isCheckMate() && !b.isStaleMate() && !resigned) {
+ 			bool inCheckMate = false;
+ 			bool inStaleMate = false;
+
+ 			while (!inCheckMate && !inStaleMate && !resigned) {
  				if(whiteTurn) cout << "ENTER WHITE'S MOVE:" << endl;
  				else cout << "ENTER BLACK'S MOVE:" << endl;
 
  				if (whiteTurn) current = white;
  				else current = black;
  
- 				if (!current->move()) resigned = true;		
+ 				current->move();
+ 				if(b.isCheckMate()) inCheckMate = true;
+ 				if(b.isStaleMate()) inStaleMate = true;				
  				view.draw();
  
  				whiteTurn = !whiteTurn;
- 			}
+ 			}			
  
  			// updating score
-			if(b.isStaleMate()){
+			if(inStaleMate){
 				cout << "Stalemate!" << endl;
 				whitescore += 0.5; blackscore += 0.5;
-			}else if(b.isCheckMate() || resigned){
-				cout << "Checkmate!" << endl;
+			}else if(inCheckMate || resigned){
+				if (!resigned) cout << "Checkmate!" << endl;
 				if(!whiteTurn){
 					whitescore++;
 					cout << "White wins!" << endl;
@@ -129,7 +134,7 @@ int main() {
 					blackscore++;
 					cout << "Black wins!" << endl;	
 				}					
-			}					
+			}			 	
  		}
  	} 
  	cout << "Final Score" << endl;
