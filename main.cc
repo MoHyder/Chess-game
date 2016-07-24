@@ -54,7 +54,7 @@
  			int xpos, ypos;
  				xpos = c[0] - 'a';
  				ypos = c[1] - '1';
- 				b.editBoard(c[0], xpos, ypos);
+ 				b.editBoard('-', xpos, ypos);
  		}else if(c == "="){
  			*in >> c;
  			if(c == "black") whiteTurn = false;
@@ -139,7 +139,7 @@ int main() {
 					cout << "Black wins!" << endl;	
 				}					
 			}else if(resigned){
-				if(whiteTurn){
+				if(!whiteTurn){
 					blackscore++;
 					cout << "Black wins!" << endl;				
 				}
@@ -155,7 +155,9 @@ int main() {
  	} 
  	cout << "Final Score" << endl;
  	cout << "White: " << whitescore << endl;
- 	cout << "Black: " << blackscore << endl;	
+ 	cout << "Black: " << blackscore << endl;
+ 	if(white) delete white;
+ 	if(black) delete black;	
  
  	return 0;
 }

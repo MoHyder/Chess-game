@@ -371,7 +371,9 @@ int Board::move(int posX, int posY, int destX, int destY, char turn, char promot
 }
 
 Board::~Board(){
-    for(int x = 0; x < 8; ++x)
-        for(int y = 0; y < 8; ++y)
+    for(int x = 0; x < 8; ++x){
+        for(int y = 0; y < 8; ++y){
             if(layout[x][y]) delete layout[x][y];
+        }
+    }
 }
