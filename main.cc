@@ -102,17 +102,17 @@ int main() {
  			if(!lff) {setup("game"); view.draw();}
  			
  			bool resigned = false;
- 			while (!b.isCheckMate() || !b.isStaleMate() || !resigned) {
+ 			while (!b.isCheckMate() && !b.isStaleMate() && !resigned) {
  				if(whiteTurn) cout << "ENTER WHITE'S MOVE:" << endl;
  				else cout << "ENTER BLACK'S MOVE:" << endl;
+
+ 				if (whiteTurn) current = white;
+ 				else current = black;
  
  				if (!current->move()) resigned = true;		
  				view.draw();
  
  				whiteTurn = !whiteTurn;
- 
- 				if (whiteTurn) current = white;
- 				else current = black;				
  			}
  
  			// updating score
