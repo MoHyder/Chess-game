@@ -21,9 +21,9 @@ void Pawn::getAllValidMoves(Piece* const layout[8][8], bool backedUp){
 	// one step
 	if(layout[x][y] == nullptr) Piece::pushValidMove(x, y, layout,validMoves,backedUp);
 	// kill
-	if(x < 7 && layout[x + 1][y] != nullptr && layout[x + 1][y]->getColour() != colour)
+	if(x < 7 && layout[x + 1][y] != nullptr)
 		Piece::pushValidMove(x + 1, y, layout,validMoves,backedUp);	
-	if(x > 1  && layout[x - 1][y] != nullptr && layout[x - 1][y]->getColour() != colour)
+	if(x > 1  && layout[x - 1][y] != nullptr)
 		Piece::pushValidMove(x - 1, y, layout,validMoves,backedUp);	
 }
 bool Pawn::move(int destX, int destY, Piece* const layout[8][8]){

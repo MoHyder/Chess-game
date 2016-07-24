@@ -19,8 +19,6 @@ public:
 		if(colour == 'w') myPieces = &(b->whitePieces);
 		else myPieces = &(b->blackPieces);
 
-		cout << "Comp1 Random move" << endl;
-
 		//truely random moves
 		int tries = 3;
 		while(tries >= 0){
@@ -39,13 +37,11 @@ public:
 				for(const auto move : validMoves){				
 					desX = move[0] - '0';
 					desY = move[1] - '0';
-					if (b->move(curX, curY, desX, desY, colour) <= 102) return true;					
+					if (b->move(curX, curY, desX, desY, colour, 'Q') <= 102) return true;					
 				}			
 			}			
 		}
 		
-		cout << "Comp1 legal move" << endl;
-
 		// if all three random moves do not work, make first legal move
 		for(const auto &piece : *myPieces){
 			vector<string> validMoves =  piece->validMoves;
@@ -54,7 +50,7 @@ public:
 			for(const auto &move : validMoves){				
 				desX = move[0] - '0';
 				desY = move[1] - '0';				
-				if (b->move(curX, curY, desX, desY, colour) <= 102) return true;				
+				if (b->move(curX, curY, desX, desY, colour, 'Q') <= 102) return true;				
 			}			
 		}
 

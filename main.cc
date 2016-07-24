@@ -34,6 +34,9 @@
  	}else if("game" == c){
  		fin = ifstream{"defaultBoard.in"};
  		in = &fin; 
+ 	}else if("reset" == c){
+ 		fin = ifstream{"resetBoard.in"};
+ 		in = &fin; 
  	} 
  	while (*in >> c) {
  		if(c == "setup") continue;
@@ -54,7 +57,8 @@
  				b.editBoard(c[0], xpos, ypos);
  		}else if(c == "="){
  			*in >> c;
- 			if(c == "black") whiteTurn = !whiteTurn;
+ 			if(c == "black") whiteTurn = false;
+ 			else whiteTurn = true;
  		}else cout << "TRY AGAIN" << endl;
  	}
  
@@ -99,7 +103,7 @@ int main() {
  		  	current = white;
  
  			cout << "STARTING GAME" << endl;
- 			if(!lff) {setup("game"); view.draw();}
+ 			if(!lff) {setup("game"); view.draw(); whiteTurn = true;}
  			
  			bool resigned = false;
  			bool inCheckMate = false;
@@ -112,20 +116,20 @@ int main() {
  				if (whiteTurn) current = white;
  				else current = black;
  
- 				if (! current->move()) resigned = true;
+ 				if(!current->move()) resigned = true;
  				if(b.isCheckMate()) inCheckMate = true;
  				if(b.isStaleMate()) inStaleMate = true;				
  				view.draw();
  
  				whiteTurn = !whiteTurn;
- 			}			
- 
+ 			}
+
  			// updating score
 			if(inStaleMate){
 				cout << "Stalemate!" << endl;
 				whitescore += 0.5; blackscore += 0.5;
-			}else if(inCheckMate || resigned){
-				if (!resigned) cout << "Checkmate!" << endl;
+			}else if(inCheckMate){
+				cout << "Checkmate!" << endl;				
 				if(!whiteTurn){
 					whitescore++;
 					cout << "White wins!" << endl;
@@ -134,7 +138,19 @@ int main() {
 					blackscore++;
 					cout << "Black wins!" << endl;	
 				}					
-			}			 	
+			}else if(resigned){
+				if(whiteTurn){
+					blackscore++;
+					cout << "Black wins!" << endl;				
+				}
+				else {
+					whitescore++;
+					cout << "White wins!" << endl;
+				}		
+
+			}
+			setup("reset");
+ 			lff = false;			 	
  		}
  	} 
  	cout << "Final Score" << endl;

@@ -36,7 +36,7 @@ public:
 				for(const auto &move : validMoves){					
 					desX = move[0] - '0';
 					desY = move[1] - '0';
-					if(desX == oppPiece->getX() && desY == oppPiece->getY() && b->move(curX, curY, desX, desY, colour) != 204)						
+					if(desX == oppPiece->getX() && desY == oppPiece->getY() && b->move(curX, curY, desX, desY, colour,'Q') != 204)						
 						return true;
 				}
 			}
@@ -50,11 +50,13 @@ public:
 			for(const auto &move : validMoves){				
 				desX = move[0] - '0';
 				desY = move[1] - '0';
-				if(desX == oppKing->getX() && desY == oppKing->getY() && b->move(curX, curY, desX, desY, colour) != 204)						
-						return true;			
-				}
+				int result = b->move(curX, curY, desX, desY, colour,'Q');
+				if(result >= 200) continue;						
+				else if(result == 102) return true;			
+				else b->undoMove();
+			}
 		}
-		
+
 		// if all fails, do first legal move
 		for(const auto &piece : *myPieces){
 			vector<string> validMoves = piece->validMoves;
@@ -63,9 +65,9 @@ public:
 			for(const auto &move : validMoves){				
 				desX = move[0] - '0';
 				desY = move[1] - '0';			
-				if (b->move(curX, curY, desX, desY, colour) <= 102) return true;
+				if (b->move(curX, curY, desX, desY, colour,'Q') <= 102) return true;
 			}
-		}
+		}	
 
 		return false;
 	}	

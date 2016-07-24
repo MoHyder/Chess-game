@@ -5,7 +5,6 @@
 #include "player.h"
 #include "board.h"
 using namespace std;
-bool humantest = true;
 class Human: public Player {
   public:
   bool move() {
@@ -19,22 +18,21 @@ class Human: public Player {
     else if (command == "move") {
         int result = 300;
         while (result > 102) {
-            if(result != 300) cout << "TRY AGAIN" << endl;
-	    cin >> cell1 >> cell2;
+            if(result != 300) {cout << "TRY AGAIN" << endl; cin >> cell1;}
+            cin >> cell1 >> cell2;
             if (cin.eof()) return false;
             int x1 = cell1[0] - 'a';
-            int x2 = cell1[1] - '1';
-            int y1 = cell2[0] - 'a';
+            int y1 = cell1[1] - '1';
+            int x2 = cell2[0] - 'a';
             int y2 = cell2[1] - '1';
-	    if (humantest) cout << "Attempt move : " << x1 << y1 << " to " << x2 << y2 << endl;
-            result = b->move(x1, x2, y1, y2, colour);
-            if (humantest) cout << "HUMAN result: " << result << endl;           
+            result = b->move(x1, y1, x2, y2, colour);           
         }
         return true;
     }else if(command == "undo") {
         b->undoMove();
         return true;
     }
+
     return false;
   }
   Human(Board *b, char colour): Player(b, colour) {}

@@ -176,8 +176,8 @@ bool Board::isCheckMate(){
         for(auto &validMove : validMoves){
             int desX = validMove[0] - '0';
             int desY = validMove[1] - '0';
-            int result = move(curX, curY, desX, desY, piece->getColour(),true);
-            if(result <= 102){                    
+            int result = move(curX, curY, desX, desY, piece->getColour(),'q');
+            if(result <= 102){
                 undoMove();
                 inCheckMate = false;
                 break;
@@ -206,7 +206,7 @@ bool Board::isStaleMate(){
         for(auto &validMove : validMoves){
             int desX = validMove[0] - '0';
             int desY = validMove[1] - '0';
-            int result = move(curX, curY, desX, desY, piece->getColour(),true);
+            int result = move(curX, curY, desX, desY, piece->getColour(),'q');
             if(result <= 102){                    
                 undoMove();
                 inStaleMate = false;
@@ -308,7 +308,7 @@ bool Board::undoMove(){
 }
 
 // The move function returns an int depending if move was a success or a failure
-int Board::move(int posX, int posY, int destX, int destY, char turn, bool testing){
+int Board::move(int posX, int posY, int destX, int destY, char turn, char promote){
     if(posX == destX && posY == destY) return 201; // false
     // if no piece exists
     if(layout[posX][posY] == nullptr) return 202; // false
@@ -318,24 +318,20 @@ int Board::move(int posX, int posY, int destX, int destY, char turn, bool testin
     if(layout[posX][posY]->move(destX,destY,layout)){
         pushToUndoStack();
         bool killed = false;
+        bool promotion = false;
+
+        // pawn promotion
+        if((destY == 0 || destY == 7) && layout[posX][posY]->getName() == 'P') promotion = true;
+        
         // killing oppents piece
         if(layout[destX][destY] != nullptr && (layout[posX][posY]->getColour() != layout[destX][destY]->getColour())) {
            killed = true;
            delete layout[destX][destY];
            layout[destX][destY] = nullptr;
-        }
-        // pawn promotion
-        if((destY == 0 || destY == 7) && layout[posX][posY]->getName() == 'P'){
-
-            char promote;
-            if(!testing) cin >> promote;
-            else if(turn == 'b') promote = layout[posX][posY]->getName() + 'a';
-            else promote = layout[posX][posY]->getName();
-            layout[posX][posY] = nullptr;            
-            editBoard(promote, destX, destY);
-
         // castling & any other move        
-        }else if(!moveCastling(posX,posY, destX, destY)){
+        }
+
+        if(!moveCastling(posX,posY, destX, destY)){        
 
            // "physically moving the piece"
             layout[destX][destY] = layout[posX][posY];            
@@ -351,7 +347,18 @@ int Board::move(int posX, int posY, int destX, int destY, char turn, bool testin
         if((inBlackCheck && turn == 'b') || (inWhiteCheck && turn == 'w')){
             undoMove();
             return 204;
-        }else{           
+        }else{ 
+            if (promotion){            
+                if(promote == 0) {
+                    cout << "PAWN PROMOTION" << endl;
+                    cin >> promote;
+                }else {
+                    promote = 'Q';
+                    if(turn == 'b') promote += 'a';
+                }                
+                editBoard(promote, destX, destY);
+            }    
+
             // cleaning up;
             this->turn = turn;                        
             getBoardView();

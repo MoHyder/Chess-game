@@ -28,7 +28,7 @@ public:
     bool moveCastling(int posX, int posY, int destX, int destY);
     void pushToUndoStack();
     bool undoMove();
-    int move(int posX, int posY, int destX, int destY, char turn,bool testing = false);
+    int move(int posX, int posY, int destX, int destY, char turn, char promote = 0);
     bool isCheck();
     bool isCheckMate();
     bool isStaleMate();
