@@ -1,0 +1,328 @@
+PLEASE ENTER
+1) lff :To load from file
+2) setup :To setup board
+3) game :To start game
+ENTER FILE NAME:
+8  _ qk_ _
+7 _ _ _ _ 
+6  p _ _ _
+5 _ _ _ _ 
+4  _ _ _ _
+3 _ _ _ _ 
+2 P_ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+PLEASE ENTER
+1) lff :To load from file
+2) setup :To setup board
+3) game :To start game
+WHITE PLAYER, PLEASE ENTER:
+1) human
+2) computer[1]
+3) computer[2]
+BLACK PLAYER
+STARTING GAME
+ENTER WHITE'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ qk_ _
+7 _ _ _ _ 
+6  p _ _ _
+5 _ _ _ _ 
+4 P_ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+ENTER BLACK'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+TRY AGAIN
+8  _ qk_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _p_ _ _ 
+4 P_ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+ENTER WHITE'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ qk_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _P_ _ _ 
+4  _ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+ENTER BLACK'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ _k_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _P_ _ q 
+4  _ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+ENTER WHITE'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+TRY AGAIN
+8  _ _k_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _P_ _ q 
+4  _ _ _ _
+3 _ _ _N_ 
+2  _ _ _ _
+1 _ _ K _R
+
+  abcdefgh
+ENTER BLACK'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ _ _ _
+7 _ _ k _ 
+6  _ _ _ _
+5 _P_ _ q 
+4  _ _ _ _
+3 _ _ _N_ 
+2  _ _ _ _
+1 _ _ K _R
+
+  abcdefgh
+ENTER WHITE'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+TRY AGAIN
+8  _ _ _ _
+7 _ _ k _ 
+6  _ _ _ _
+5 _P_ _ N 
+4  _ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K _R
+
+  abcdefgh
+ENTER BLACK'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ _k_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _P_ _ N 
+4  _ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K _R
+
+  abcdefgh
+ENTER WHITE'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ _k_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _P_ _ N 
+4  _ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ _RK 
+
+  abcdefgh
+ENTER BLACK'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ _k_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _P_ _ N 
+4  _ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K _R
+
+  abcdefgh
+ENTER WHITE'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ _ _ _
+7 _ _ k _ 
+6  _ _ _ _
+5 _P_ _ N 
+4  _ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K _R
+
+  abcdefgh
+ENTER BLACK'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ _ _ _
+7 _ _ k _ 
+6  _ _ _ _
+5 _P_ _ q 
+4  _ _ _ _
+3 _ _ _N_ 
+2  _ _ _ _
+1 _ _ K _R
+
+  abcdefgh
+ENTER WHITE'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ _k_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _P_ _ q 
+4  _ _ _ _
+3 _ _ _N_ 
+2  _ _ _ _
+1 _ _ K _R
+
+  abcdefgh
+ENTER BLACK'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ _k_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _P_ _ q 
+4  _ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+ENTER WHITE'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ qk_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _P_ _ _ 
+4  _ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+ENTER BLACK'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ qk_ _
+7 _ _ _ _ 
+6  _ _ _ _
+5 _p_ _ _ 
+4 P_ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+ENTER WHITE'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ qk_ _
+7 _ _ _ _ 
+6  p _ _ _
+5 _ _ _ _ 
+4 P_ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+ENTER BLACK'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ qk_ _
+7 _ _ _ _ 
+6  p _ _ _
+5 _ _ _ _ 
+4  _ _ _ _
+3 _ _ _ _ 
+2 P_ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+ENTER WHITE'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+resign : to resign game
+move : to move piece
+undo : to undo last move
+resign : to resign game
+move : to move piece
+undo : to undo last move
+resign : to resign game
+move : to move piece
+undo : to undo last move
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ qk_ _
+7 _ _ _ _ 
+6  p _ _ _
+5 _ _ _ _ 
+4 P_ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+ENTER BLACK'S MOVE:
+resign : to resign game
+move : to move piece
+undo : to undo last move
+8  _ qk_ _
+7 _ _ _ _ 
+6  p _ _ _
+5 _ _ _ _ 
+4 P_ _ _ _
+3 _ _ _ _ 
+2  _ _ _ _
+1 _ _ K NR
+
+  abcdefgh
+White wins!
+PLEASE ENTER
+1) lff :To load from file
+2) setup :To setup board
+3) game :To start game
+Final Score
+White: 1
+Black: 0

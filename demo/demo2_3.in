@@ -1,0 +1,10 @@
+lff
+demo2_layout.in
+game
+human
+computer[2]
+move d8 a8
+move g2 h3
+move g3 f3
+resign
+
