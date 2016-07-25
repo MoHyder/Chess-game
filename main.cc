@@ -9,6 +9,7 @@
  #include "human.h"
  #include "comp1.h"
  #include "comp2.h"
+ #include "comp3.h"
  
  #include "view.h"
  #include "text.h"
@@ -93,13 +94,15 @@ int main() {
  	  		cout << "3) computer[2]" << endl;
  	  		cin >> c;
  			if (c == "human") white = new Human(&b, 'w');
- 			else if (c == "computer[1]") white = new Comp1(&b, 'w');
+ 			else if (c == "computer[1]") white = new Comp1(&b,'w');
  			else if (c == "computer[2]") white = new Comp2(&b,'w');
+			else if (c == "computer[3]") white = new Comp3(&b,'w');
  			cout << "BLACK PLAYER" << endl;	  		
  	  		cin >> c;
  			if (c == "human") black = new Human(&b, 'b');
- 			else if (c == "computer[1]") black = new Comp1(&b, 'b');
- 			else if (c == "computer[2]") black = new Comp2(&b,'b');			
+ 			else if (c == "computer[1]") black = new Comp1(&b,'b');
+ 			else if (c == "computer[2]") black = new Comp2(&b,'b');
+			else if (c == "computer[3]") black = new Comp3(&b,'b');
  		  	current = white;
  
  			cout << "STARTING GAME" << endl;
